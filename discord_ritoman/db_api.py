@@ -18,10 +18,14 @@ import os
 def get_cursor():
     """
     """
+    db_pass = os.getenv("DB_PASS", None)
+    if db_pass is None:
+        raise Exception("Failed to load password from enviroment")
+    
     with psycopg2.connect(
         dbname="root",
         user="root",
-        password=os.getenv("DB_PASS", ""),
+        password=db_pass,
         host="127.0.0.1",
         port=5432,
     ) as connection:
