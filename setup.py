@@ -13,4 +13,5 @@ setup(
     author="myname",
     author_email="myemail",
     packages=["discord_ritoman"],
+    package_data={"": ["*.json", "*.pgsql"]},
 )

@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS lol_data;
+DROP TABLE IF EXISTS discord_users CASCADE;
+DROP TABLE IF EXISTS prefixes;
+DROP TABLE IF EXISTS stat_prefixes_01;
+DROP TABLE IF EXISTS suffixes;
