@@ -11,9 +11,7 @@ from discord_ritoman.utils import unix_time_millis
 import os
 
 
-RIOT_TOKEN = os.getenv(
-    "RIOT_TOKEN", "RGAPI-a37a2689-066d-4fd2-80aa-257653241d65"
-)
+RIOT_TOKEN = os.getenv("RIOT_TOKEN", None)
 
 
 def get_account_id(puuid: str):
