@@ -38,7 +38,7 @@ def run_lol():
 
         try:
             account_id = get_account_id(user_info[1])
-            matches = get_matches(account_id, timestamp - 86400000)
+            matches = get_matches(account_id, timestamp)
         except Exception:
             print(
                 "There was an error retrieving account data, skipping this iteration"
