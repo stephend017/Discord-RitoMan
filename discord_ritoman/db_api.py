@@ -12,7 +12,7 @@ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgres
 import psycopg2
 from psycopg2.extras import DictCursor
 from contextlib import contextmanager
-
+import os
 
 @contextmanager
 def get_cursor():
@@ -21,7 +21,7 @@ def get_cursor():
     with psycopg2.connect(
         dbname="stephen",
         user="stephen",
-        password="Revod99-",
+        password=os.getenv("DB_PASS", ""),
         host="127.0.0.1",
         port=5433,
     ) as connection:
