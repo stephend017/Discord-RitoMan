@@ -19,8 +19,8 @@ def get_cursor():
     """
     """
     with psycopg2.connect(
-        dbname="stephen",
-        user="stephen",
+        dbname="root",
+        user="root",
         password=os.getenv("DB_PASS", ""),
         host="127.0.0.1",
         port=5432,
