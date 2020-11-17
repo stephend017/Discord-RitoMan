@@ -23,7 +23,7 @@ def get_cursor():
         user="stephen",
         password=os.getenv("DB_PASS", ""),
         host="127.0.0.1",
-        port=5433,
+        port=5432,
     ) as connection:
         yield connection.cursor(cursor_factory=DictCursor)
         connection.commit()
