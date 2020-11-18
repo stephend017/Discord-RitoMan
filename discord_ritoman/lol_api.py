@@ -15,8 +15,7 @@ RIOT_TOKEN = os.getenv("RIOT_TOKEN", None)
 
 
 def get_account_id(puuid: str):
-    """
-    """
+    """"""
     url = f"https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36",
@@ -38,8 +37,7 @@ def get_account_id(puuid: str):
 
 
 def get_matches(account_id: str, start_timestamp: int):
-    """
-    """
+    """"""
     url = f"https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/{account_id}?beginTime={start_timestamp}"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36",
@@ -66,8 +64,7 @@ def get_matches(account_id: str, start_timestamp: int):
 
 
 def get_match_data(match_id: int):
-    """
-    """
+    """"""
     url = f"https://na1.api.riotgames.com/lol/match/v4/matches/{match_id}"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36",
@@ -85,8 +82,7 @@ def get_match_data(match_id: int):
 
 
 def get_match_timeline(match_id: int):
-    """
-    """
+    """"""
     url = f"https://na1.api.riotgames.com/lol/match/v4/timelines/by-match/{match_id}"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36",

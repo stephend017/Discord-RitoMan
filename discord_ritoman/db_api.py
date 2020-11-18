@@ -9,19 +9,20 @@ source for setting up db on linux
 https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-20-04#step-3-%E2%80%94-creating-a-new-role
 """
 
+from typing import Any, List
 import psycopg2
 from psycopg2.extras import DictCursor
 from contextlib import contextmanager
 import os
 
+
 @contextmanager
 def get_cursor():
-    """
-    """
+    """"""
     db_pass = os.getenv("DB_PASS", None)
     if db_pass is None:
         raise Exception("Failed to load password from enviroment")
-    
+
     with psycopg2.connect(
         dbname="root",
         user="root",
@@ -33,10 +34,20 @@ def get_cursor():
         connection.commit()
 
 
-def get_all_discord_users():
+def get_all_discord_users() -> List[List[Any]]:
     """
+    Returns a list of all discord users with thier riot PUUID and discord id
+
+    Returns:
+        List[List[Any]]: The list of discord users where each sub list is a
+            discord users information. Each sublist has the following format
+            - discord_username (str): this is the screen name for each user
+            - riot_puuid (str): this is the puuid assigned to this user by
+                riot games API
+            - discord_id (int): this is the numeric ID representing this
+                discord user in the discord server
     """
-    data = {}
+    data = []
     with get_cursor() as cursor:
         cursor.execute("SELECT * FROM discord_users")
         data = cursor.fetchall()
@@ -45,6 +56,15 @@ def get_all_discord_users():
 
 def get_last_recorded_time(discord_username: str) -> int:
     """
+    Returns ms passed since epoch of the last recorded game
+    for a given discord user
+
+    Args:
+        discord_username (str): the username of the discord member
+
+    Returns:
+        int: ms passed since the epoch of the last recorded game
+            for this user
     """
     data = {}
     with get_cursor() as cursor:
@@ -58,6 +78,12 @@ def get_last_recorded_time(discord_username: str) -> int:
 
 def set_last_recorded_time(discord_username: str, timestamp: int):
     """
+    Updates the last recorded game time for a given user
+
+    Args:
+        discord_username (str): the username of the discord member
+        timestamp (int): the new last recorded game time in ms
+            since epoch
     """
     with get_cursor() as cursor:
         cursor.execute(
@@ -69,31 +95,55 @@ def set_last_recorded_time(discord_username: str, timestamp: int):
         )
 
 
-def get_all_prefixes():
+def get_all_prefixes() -> List[List[str]]:
     """
+    Returns all prefixes for game loss message.
+
+    This is the text that appears before the username in
+    the message that is sent to the discord
+
+    Returns:
+        List[List[str]]: a list of lists where each sublist
+            contains 1 element which is the prefix
     """
     data = {}
     with get_cursor() as cursor:
-        cursor.execute("SELECT * FROM prefixes",)
+        cursor.execute("SELECT * FROM prefixes")
         data = cursor.fetchall()
     return data
 
 
-def get_all_stat_prefixes_01():
+def get_all_stat_prefixes_01() -> List[List[str]]:
     """
+    Returns all stat prefixes for game loss message.
+
+    This is the text that appears after the username in
+    the message that is sent to the discord
+
+    Returns:
+        List[List[str]]: a list of lists where each sublist
+            contains 1 element which is the stat prefix
     """
     data = {}
     with get_cursor() as cursor:
-        cursor.execute("SELECT * FROM stat_prefixes_01",)
+        cursor.execute("SELECT * FROM stat_prefixes_01")
         data = cursor.fetchall()
     return data
 
 
-def get_all_suffixes():
+def get_all_suffixes() -> List[List[str]]:
     """
+    Returns all suffixes for game loss message.
+
+    This is the text that appears at the end of
+    the message that is sent to the discord
+
+    Returns:
+        List[List[str]]: a list of lists where each sublist
+            contains 1 element which is the suffix
     """
     data = {}
     with get_cursor() as cursor:
-        cursor.execute("SELECT * FROM suffixes",)
+        cursor.execute("SELECT * FROM suffixes")
         data = cursor.fetchall()
     return data

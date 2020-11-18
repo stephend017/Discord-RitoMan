@@ -1,4 +1,3 @@
-from sys import prefix
 from discord_ritoman.discord_api import send_discord_message
 from typing import Any, Dict, List
 from discord_ritoman.lol_match_metadata import LoLMatchMetadata
@@ -59,6 +58,7 @@ def run_lol():
                 continue
 
             data = LoLMatchData(match_data, match_timeline)
+            champion = match.get_champion_name()
 
             # check if the user lost and had less solo kills
             # than solo deaths
@@ -72,7 +72,7 @@ def run_lol():
                     )
                     suffix_index: int = random.randint(0, len(suffixes) - 1)
                     send_discord_message(
-                        f"{prefixes[prefix_index][0]} <@{user_info[2]}> {stat_prefixes_01[stat_prefix_01_index][0]} {solo_deaths} solo deaths and only {solo_kills} solo kills in their latest defeat in league of legends. {suffixes[suffix_index][0]}"
+                        f"{prefixes[prefix_index][0]} <@{user_info[2]}> {stat_prefixes_01[stat_prefix_01_index][0]} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index][0]}"
                     )
 
             set_last_recorded_time(user_info[0], data.get_match_end())
