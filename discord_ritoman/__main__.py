@@ -4,13 +4,12 @@ import time
 
 
 def main():
-    """
-    """
+    """"""
     schedule.every(5).minutes.do(run_lol)
-    
+
     # run initially
     run_lol()
-    
+
     while True:
         schedule.run_pending()
         time.sleep(60)  # check every minute
