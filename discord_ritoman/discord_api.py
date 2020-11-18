@@ -4,7 +4,14 @@ import requests
 
 def send_discord_message(message: str):
     """
-    sends a message to the discord server
+    Sends a message to the discord server
+
+    To @ a user it must be in the following format
+    <@user_id> where user_id is the discord id for
+    that user.
+
+    Args:
+        message (str): the literal text to send.
     """
     webhook = os.getenv("DISCORD_BOT", None,)
     if webhook is None:
