@@ -32,7 +32,7 @@ jobs:
           echo DISCORD_BOT=${{ secrets.DISCORD_BOT }} >> .env
 
       - name: Install PM2
-        run: npm i pm2
+        run: npm i -g pm2
 
       - name: Deploy
         run: env $(cat .env | grep -v \"#\" | xargs) pm2 deploy ecosystem.config.js staging
