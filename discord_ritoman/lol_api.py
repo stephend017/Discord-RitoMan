@@ -1,5 +1,5 @@
 """
-this is the api for mypackage
+Interface for accessing riot API
 """
 from typing import Any
 from discord_ritoman.lol_match_metadata import LoLMatchMetadata
