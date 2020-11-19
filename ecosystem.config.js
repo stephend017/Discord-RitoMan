@@ -18,7 +18,7 @@ module.exports = {
       key: 'deploy.key',
       repo: 'https://github.com/stephend017/discord_ritoman.git',
       path : '/root/discord_ritoman',
-      'post-deploy' : 'python3.8 -m venv venv',
+      //'post-deploy' : 'python3.8 -m venv venv',
       //&& source venv/bin/activate && pip install -r requirements.txt && pip install . && pm2 reload ecosystem.config.js --env production',
       env: {
         DB_PASS: process.env.DB_PASS,
