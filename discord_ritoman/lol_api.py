@@ -5,7 +5,10 @@ from typing import Any
 from discord_ritoman.lol_match_metadata import LoLMatchMetadata
 import requests
 import os
+import logging
 
+logger = logging.Logger("LoL API Logger")
+logger.addHandler(logging.FileHandler("./lol_api.log"))
 
 RIOT_TOKEN = os.getenv("RIOT_TOKEN", None)
 
@@ -31,7 +34,7 @@ def riot_api_get(url: str) -> Any:
     if response.ok:
         return response.json()
 
-    print(
+    logger.critical(
         f"GET encrypted account ID request failed: [{response.status_code}] {response.text}"
     )
     raise Exception(

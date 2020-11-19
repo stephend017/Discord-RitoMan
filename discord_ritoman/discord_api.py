@@ -1,6 +1,11 @@
 import os
 import requests
 
+import logging
+
+logger = logging.Logger("Discord API Logger")
+logger.addHandler(logging.FileHandler("./discord_api.log"))
+
 
 def send_discord_message(message: str):
     """
@@ -15,7 +20,7 @@ def send_discord_message(message: str):
     """
     webhook = os.getenv("DISCORD_BOT", None,)
     if webhook is None:
-        print("Unable to read webhook from environment variable")
+        logger.critical("Unable to read webhook from environment variable")
         return
 
     response = requests.post(webhook, json={"content": message})
