@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
     name: "ritoman",
-    cmd: "discord_ritoman/__main__.py",
+    script: "discord_ritoman/__main__.py",
     interpreter: "python3",
     env: {
       DB_PASS: process.env.DB_PASS,
