@@ -17,6 +17,10 @@ from discord_ritoman.lol_api import (
 )
 from discord_ritoman.lol_match_data import LoLMatchData
 import random
+import logging
+
+logger = logging.Logger("API Logger")
+logger.addHandler(logging.FileHandler("./api.log"))
 
 
 def run_lol():
@@ -39,7 +43,7 @@ def run_lol():
             account_id = get_account_id(user_info[1])
             matches = get_matches(account_id, timestamp)
         except Exception:
-            print(
+            logger.error(
                 "There was an error retrieving account data, skipping this iteration"
             )
             continue
@@ -52,7 +56,7 @@ def run_lol():
                 match_data = get_match_data(match.game_id)
                 match_timeline = get_match_timeline(match.game_id)
             except Exception:
-                print(
+                logger.error(
                     "There was an error retrieving match data, skipping this iteration"
                 )
                 continue
