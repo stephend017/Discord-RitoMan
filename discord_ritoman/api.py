@@ -23,6 +23,24 @@ logger = logging.Logger("API Logger")
 logger.addHandler(logging.FileHandler("./api.log"))
 
 
+def handle_lol_loss(
+    data, user_info, account_id, prefixes, stat_prefixes_01, suffixes, champion
+):
+    """
+    """
+    solo_kills: int = data.get_solo_kills(account_id)
+    solo_deaths: int = data.get_solo_killed(account_id)
+    if solo_kills < solo_deaths:
+        prefix_index: int = random.randint(0, len(prefixes) - 1)
+        stat_prefix_01_index: int = random.randint(
+            0, len(stat_prefixes_01) - 1
+        )
+        suffix_index: int = random.randint(0, len(suffixes) - 1)
+        send_discord_message(
+            f"{prefixes[prefix_index][0]} <@{user_info[2]}> {stat_prefixes_01[stat_prefix_01_index][0]} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index][0]}"
+        )
+
+
 def run_lol():
     """
     This is the function that updates and sends messages
@@ -41,10 +59,18 @@ def run_lol():
 
         try:
             account_id = get_account_id(user_info[1])
-            matches = get_matches(account_id, timestamp)
+
         except Exception:
             logger.error(
                 "There was an error retrieving account data, skipping this iteration"
+            )
+            continue
+
+        try:
+            matches = get_matches(account_id, timestamp)
+        except Exception:
+            logger.error(
+                f"There was an error retrieving matches for account [{user_info[0]}], skipping this iteration"
             )
             continue
 
@@ -67,16 +93,14 @@ def run_lol():
             # check if the user lost and had less solo kills
             # than solo deaths
             if not data.did_account_win(account_id):
-                solo_kills: int = data.get_solo_kills(account_id)
-                solo_deaths: int = data.get_solo_killed(account_id)
-                if solo_kills < solo_deaths:
-                    prefix_index: int = random.randint(0, len(prefixes) - 1)
-                    stat_prefix_01_index: int = random.randint(
-                        0, len(stat_prefixes_01) - 1
-                    )
-                    suffix_index: int = random.randint(0, len(suffixes) - 1)
-                    send_discord_message(
-                        f"{prefixes[prefix_index][0]} <@{user_info[2]}> {stat_prefixes_01[stat_prefix_01_index][0]} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index][0]}"
-                    )
+                handle_lol_loss(
+                    data,
+                    user_info,
+                    account_id,
+                    prefixes,
+                    stat_prefixes_01,
+                    suffixes,
+                    champion,
+                )
 
             set_last_recorded_time(user_info[0], data.get_match_end())
