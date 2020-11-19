@@ -41,6 +41,50 @@ def handle_lol_loss(
         )
 
 
+def handle_lol_match(
+    match,
+    account_id,
+    user_info,
+    timestamp,
+    prefixes,
+    stat_prefixes_01,
+    suffixes,
+):
+    """
+    """
+    match_data: Dict[str, Any] = {}
+    match_timeline: Dict[str, Any] = {}
+
+    try:
+        match_data = get_match_data(match.game_id)
+        match_timeline = get_match_timeline(match.game_id)
+    except Exception:
+        logger.error(
+            "There was an error retrieving match data, skipping this iteration"
+        )
+        return
+
+    data = LoLMatchData(match_data, match_timeline)
+    champion = match.get_champion_name()
+
+    # check if the user lost and had less solo kills
+    # than solo deaths
+    if not data.did_account_win(account_id):
+        handle_lol_loss(
+            data,
+            user_info,
+            account_id,
+            prefixes,
+            stat_prefixes_01,
+            suffixes,
+            champion,
+        )
+
+    match_end = data.get_match_end()
+    if match_end > timestamp:
+        set_last_recorded_time(user_info[0], data.get_match_end())
+
+
 def run_lol():
     """
     This is the function that updates and sends messages
@@ -75,32 +119,12 @@ def run_lol():
             continue
 
         for match in matches:
-            match_data: Dict[str, Any] = {}
-            match_timeline: Dict[str, Any] = {}
-
-            try:
-                match_data = get_match_data(match.game_id)
-                match_timeline = get_match_timeline(match.game_id)
-            except Exception:
-                logger.error(
-                    "There was an error retrieving match data, skipping this iteration"
-                )
-                continue
-
-            data = LoLMatchData(match_data, match_timeline)
-            champion = match.get_champion_name()
-
-            # check if the user lost and had less solo kills
-            # than solo deaths
-            if not data.did_account_win(account_id):
-                handle_lol_loss(
-                    data,
-                    user_info,
-                    account_id,
-                    prefixes,
-                    stat_prefixes_01,
-                    suffixes,
-                    champion,
-                )
-
-            set_last_recorded_time(user_info[0], data.get_match_end())
+            handle_lol_match(
+                match,
+                account_id,
+                user_info,
+                timestamp,
+                prefixes,
+                stat_prefixes_01,
+                suffixes,
+            )
