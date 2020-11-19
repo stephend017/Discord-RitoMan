@@ -68,7 +68,7 @@ def get_matches(account_id: str, start_timestamp: int):
     response = riot_api_get(url)
     return [
         LoLMatchMetadata(item["gameId"], item["champion"], item["timestamp"])
-        for item in response.json()["matches"]
+        for item in response["matches"]
     ]
 
 
