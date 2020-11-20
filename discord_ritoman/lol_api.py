@@ -103,3 +103,19 @@ def get_match_timeline(match_id: int) -> Any:
     """
     url = f"https://na1.api.riotgames.com/lol/match/v4/timelines/by-match/{match_id}"
     return riot_api_get(url)
+
+
+def get_puuid(summoner_name: str) -> str:
+    """
+    Returns a riot puuid based on a summoner name
+
+    Args:
+        summoner_name (str): the name of the summoner
+            to get a puuid for
+
+    Returns:
+        str: the puuid for the given summoner
+    """
+
+    url = f"https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}"
+    return riot_api_get(url)["puuid"]

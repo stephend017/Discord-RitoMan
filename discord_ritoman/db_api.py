@@ -9,11 +9,13 @@ source for setting up db on linux
 https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-20-04#step-3-%E2%80%94-creating-a-new-role
 """
 
+from datetime import datetime
 from typing import Any, List
 import psycopg2
 from psycopg2.extras import DictCursor
 from contextlib import contextmanager
 import os
+from discord_ritoman.utils import unix_time_millis
 
 
 @contextmanager
@@ -147,3 +149,34 @@ def get_all_suffixes() -> List[List[str]]:
         cursor.execute("SELECT * FROM suffixes")
         data = cursor.fetchall()
     return data
+
+
+def add_new_discord_user(discord_username, riot_puuid, discord_id):
+    """
+    Adds a new discord user to the DB
+    """
+
+    with get_cursor() as cursor:
+        cursor.execute(
+            "INSERT INTO discord_users (discord_username, riot_puuid, discord_id) VALUES (%(discord_username)s, %(riot_puuid)s, %(discord_id)s)",
+            {
+                "discord_username": discord_username,
+                "riot_puuid": riot_puuid,
+                "discord_id": discord_id,
+            },
+        )
+
+
+def add_new_lol_user(discord_username):
+    """
+    Adds a new user to be tracked for LoL games
+    """
+    timestamp = unix_time_millis(datetime.datetime.now())
+    with get_cursor() as cursor:
+        cursor.execute(
+            "INSERT INTO lol_data (discord_username, last_game_recorded) VALUES (%(discord_username)s, %(last_game_recorded)s)",
+            {
+                "discord_username": discord_username,
+                "last_game_recorded": timestamp,
+            },
+        )
