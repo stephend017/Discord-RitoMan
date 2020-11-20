@@ -2,3 +2,4 @@ requests==2.25.0
 fastcore
 psycopg2
 schedule
+discord.py

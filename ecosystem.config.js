@@ -6,9 +6,21 @@ module.exports = {
     env: {
       DB_PASS: process.env.DB_PASS,
       RIOT_TOKEN: process.env.RIOT_TOKEN,
-      DISCORD_BOT: process.env.DISCORD_BOT
+      DISCORD_BOT: process.env.DISCORD_BOT,
+      DISCORD_RITOMAN_BOT: process.env.DISCORD_RITOMAN_BOT
     }
-  }],
+  },
+    {
+      name: "ritoman-bot",
+      script: "discord_ritoman/bot.py",
+      interpreter: "python3",
+      env: {
+        DB_PASS: process.env.DB_PASS,
+        RIOT_TOKEN: process.env.RIOT_TOKEN,
+        DISCORD_BOT: process.env.DISCORD_BOT,
+        DISCORD_RITOMAN_BOT: process.env.DISCORD_RITOMAN_BOT
+      }
+    }],
 
   deploy : {
     production : {
@@ -22,7 +34,8 @@ module.exports = {
       env: {
         DB_PASS: process.env.DB_PASS,
         RIOT_TOKEN: process.env.RIOT_TOKEN,
-        DISCORD_BOT: process.env.DISCORD_BOT
+        DISCORD_BOT: process.env.DISCORD_BOT,
+        DISCORD_RITOMAN_BOT: process.env.DISCORD_RITOMAN_BOT
       }
     }
   }

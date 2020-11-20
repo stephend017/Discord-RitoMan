@@ -30,6 +30,7 @@ jobs:
           echo DB_PASS=${{ secrets.DB_PASS }} >> .env
           echo RIOT_TOKEN=${{ secrets.RIOT_TOKEN }} >> .env
           echo DISCORD_BOT=${{ secrets.DISCORD_BOT }} >> .env
+          echo DISCORD_RITOMAN_BOT=${{ secrets.DISCORD_RITOMAN_BOT }} >> .env
 
       - name: Install PM2
         run: npm init -y && npm i pm2
