@@ -37,13 +37,24 @@ async def register(ctx, discord_user, summoner_name):
         by quotes. example "Fwee ba Jee Ba"
     """
     user_id = discord_user[3:-1]
-    user: User = await bot.fetch_user(int(user_id))
+    user: User = None
+
+    try:
+        user = await bot.fetch_user(int(user_id))
+    except Exception:
+        logger.error("Failed to fetch user discord ID")
+        await ctx.send("Failed to fetch user discord ID")
+        return
+
     username = user.name
     riot_puuid = ""
 
     try:
-        get_puuid(summoner_name)
+        riot_puuid = get_puuid(summoner_name)
     except Exception:
+        logger.error(
+            f"Unable to find summoner {summoner_name}. Are you sure this summoner exists?"
+        )
         await ctx.send(
             f"Unable to find summoner {summoner_name}. Are you sure this summoner exists?"
         )
