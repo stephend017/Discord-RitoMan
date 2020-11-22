@@ -60,8 +60,20 @@ async def register(ctx, discord_user, summoner_name):
         )
         return
 
-    add_new_discord_user(username, riot_puuid, user_id)
-    add_new_lol_user(username)
+    try:
+        add_new_discord_user(username, riot_puuid, user_id)
+    except Exception:
+        logger.critical("Failed to update discord_users db")
+        await ctx.send("Failed to update discord_users db")
+        return
+
+    try:
+        add_new_lol_user(username)
+    except Exception:
+        logger.critical("Failed to update lol_data db")
+        await ctx.send("Failed to update lol_data db")
+        return
+
     await ctx.send(
         f"successfully added <@!{user_id}> as the summoner {summoner_name} to the DB"
     )
