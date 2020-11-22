@@ -35,10 +35,10 @@ def riot_api_get(url: str) -> Any:
         return response.json()
 
     logger.critical(
-        f"GET encrypted account ID request failed: [{response.status_code}] {response.text}"
+        f"GET riot request failed: URL: [{url}] [{response.status_code}] {response.text}"
     )
     raise Exception(
-        f"GET encrypted account ID request failed: [{response.status_code}] {response.text}"
+        f"GET riot request failed: URL: [{url}] [{response.status_code}] {response.text}"
     )
 
 
