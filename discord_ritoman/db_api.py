@@ -16,6 +16,10 @@ from psycopg2.extras import DictCursor
 from contextlib import contextmanager
 import os
 from discord_ritoman.utils import unix_time_millis
+import logging
+
+logger = logging.Logger("Discord Bot Logger")
+logger.addHandler(logging.FileHandler("./db.log"))
 
 
 @contextmanager
@@ -171,12 +175,16 @@ def add_new_lol_user(discord_username):
     """
     Adds a new user to be tracked for LoL games
     """
-    timestamp = int(unix_time_millis(datetime.datetime.now()))
-    with get_cursor() as cursor:
-        cursor.execute(
-            "INSERT INTO lol_data (discord_username, last_game_recorded) VALUES (%(discord_username)s, %(last_game_recorded)s)",
-            {
-                "discord_username": discord_username,
-                "last_game_recorded": timestamp,
-            },
-        )
+    try:
+        timestamp = int(unix_time_millis(datetime.datetime.now()))
+        with get_cursor() as cursor:
+            cursor.execute(
+                "INSERT INTO lol_data (discord_username, last_game_recorded) VALUES (%(discord_username)s, %(last_game_recorded)s)",
+                {
+                    "discord_username": discord_username,
+                    "last_game_recorded": timestamp,
+                },
+            )
+    except Exception as error:
+        logger.critical(f"ERROR: {error}")
+        raise Exception(f"ERROR: {error}")
