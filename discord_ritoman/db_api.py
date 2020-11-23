@@ -171,7 +171,7 @@ def add_new_lol_user(discord_username):
     """
     Adds a new user to be tracked for LoL games
     """
-    timestamp = unix_time_millis(datetime.datetime.now())
+    timestamp = int(unix_time_millis(datetime.datetime.now()))
     with get_cursor() as cursor:
         cursor.execute(
             "INSERT INTO lol_data (discord_username, last_game_recorded) VALUES (%(discord_username)s, %(last_game_recorded)s)",
