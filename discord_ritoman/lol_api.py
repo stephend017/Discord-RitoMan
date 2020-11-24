@@ -61,9 +61,7 @@ def get_account_id(puuid: str) -> str:
 
 
 def get_matches(account_id: str, start_timestamp: int):
-    """
-
-    """
+    """"""
     url = f"https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/{account_id}?beginTime={start_timestamp}"
     response = riot_api_get(url)
     return [

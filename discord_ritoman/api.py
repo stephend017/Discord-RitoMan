@@ -26,8 +26,7 @@ logger.addHandler(logging.FileHandler("./api.log"))
 def handle_lol_loss(
     data, user_info, account_id, prefixes, stat_prefixes_01, suffixes, champion
 ):
-    """
-    """
+    """"""
     solo_kills: int = data.get_solo_kills(account_id)
     solo_deaths: int = data.get_solo_killed(account_id)
     if solo_kills < solo_deaths:
@@ -50,8 +49,7 @@ def handle_lol_match(
     stat_prefixes_01,
     suffixes,
 ):
-    """
-    """
+    """"""
     match_data: Dict[str, Any] = {}
     match_timeline: Dict[str, Any] = {}
 

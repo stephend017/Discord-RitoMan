@@ -10,13 +10,14 @@ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgres
 """
 
 from datetime import datetime
-from typing import Any, List
+from typing import Any, Callable, List
 import psycopg2
 from psycopg2.extras import DictCursor
 from contextlib import contextmanager
 import os
 from discord_ritoman.utils import unix_time_millis
 import logging
+import functools
 
 logger = logging.Logger("Discord Bot Logger")
 logger.addHandler(logging.FileHandler("./db.log"))
@@ -24,7 +25,13 @@ logger.addHandler(logging.FileHandler("./db.log"))
 
 @contextmanager
 def get_cursor():
-    """"""
+    """
+    Connects to the Database using credentials stored
+    in environment variables
+
+    Returns:
+        contextmanager: A context manager of the cursor object
+    """
     db_pass = os.getenv("DB_PASS", None)
     if db_pass is None:
         raise Exception("Failed to load password from enviroment")
@@ -40,6 +47,88 @@ def get_cursor():
         connection.commit()
 
 
+def db_insert(func: Callable):
+    """
+    Wrapper for database insert functions.
+
+    This wrapper provides logging and basic error
+    handling for db functions
+
+    Args:
+        func (Callable): the database insert function to call
+
+    Returns:
+        Callable: function that calls the passed in function
+            and logs errors
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception as error:
+            logger.critical(f"ERROR: {error}")
+            return False
+        return True
+
+    return wrapper
+
+
+def db_update(func: Callable):
+    """
+    Wrapper for database update functions.
+
+    This wrapper provides logging and basic error
+    handling for db functions
+
+    Args:
+        func (Callable): the database update function to call
+
+    Returns:
+        Callable: function that calls the passed in function
+            and logs errors
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception as error:
+            logger.critical(f"ERROR: {error}")
+            return False
+        return True
+
+    return wrapper
+
+
+def db_select(func: Callable):
+    """
+    Wrapper for database select functions.
+
+    This wrapper provides logging and basic error
+    handling for db functions
+
+    Args:
+        func (Callable): the database select function to call
+
+    Returns:
+        Callable: function that calls the passed in function
+            and logs errors
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            data = func(*args, **kwargs)
+            return data
+        except Exception as error:
+            logger.critical(f"ERROR: {error}")
+            return None
+
+    return wrapper
+
+
+@db_select
 def get_all_discord_users() -> List[List[Any]]:
     """
     Returns a list of all discord users with thier riot PUUID and discord id
@@ -60,6 +149,7 @@ def get_all_discord_users() -> List[List[Any]]:
     return data
 
 
+@db_select
 def get_last_recorded_time(discord_username: str) -> int:
     """
     Returns ms passed since epoch of the last recorded game
@@ -72,7 +162,7 @@ def get_last_recorded_time(discord_username: str) -> int:
         int: ms passed since the epoch of the last recorded game
             for this user
     """
-    data = {}
+    data: int = 0
     with get_cursor() as cursor:
         cursor.execute(
             "SELECT last_game_recorded FROM lol_data WHERE discord_username=%(discord_username)s",
@@ -82,6 +172,7 @@ def get_last_recorded_time(discord_username: str) -> int:
     return data[0][0]
 
 
+@db_update
 def set_last_recorded_time(discord_username: str, timestamp: int):
     """
     Updates the last recorded game time for a given user
@@ -101,6 +192,7 @@ def set_last_recorded_time(discord_username: str, timestamp: int):
         )
 
 
+@db_select
 def get_all_prefixes() -> List[List[str]]:
     """
     Returns all prefixes for game loss message.
@@ -119,6 +211,7 @@ def get_all_prefixes() -> List[List[str]]:
     return data
 
 
+@db_select
 def get_all_stat_prefixes_01() -> List[List[str]]:
     """
     Returns all stat prefixes for game loss message.
@@ -137,6 +230,7 @@ def get_all_stat_prefixes_01() -> List[List[str]]:
     return data
 
 
+@db_select
 def get_all_suffixes() -> List[List[str]]:
     """
     Returns all suffixes for game loss message.
@@ -155,9 +249,23 @@ def get_all_suffixes() -> List[List[str]]:
     return data
 
 
-def add_new_discord_user(discord_username, riot_puuid, discord_id):
+@db_insert
+def add_new_discord_user(
+    discord_username: str, riot_puuid: str, discord_id: int
+) -> bool:
     """
     Adds a new discord user to the DB
+
+    Note: Errored operations will log the error to the db logfile
+
+    Args:
+        discord_username (str): the username of the discord member
+        riot_puuid       (str): the riot_puuid of the discord member
+        discord_id       (int): the numeric discord id of the
+                                discord member
+
+    Returns:
+        bool: True if succeeded, False otherwise
     """
 
     with get_cursor() as cursor:
@@ -171,20 +279,25 @@ def add_new_discord_user(discord_username, riot_puuid, discord_id):
         )
 
 
-def add_new_lol_user(discord_username):
+@db_insert
+def add_new_lol_user(discord_username: str) -> bool:
     """
     Adds a new user to be tracked for LoL games
+
+    Note: Errored operations will log the error to the db logfile
+
+    Args:
+        discord_username (str): the username of the discord member
+
+    Returns:
+        bool: True if the operation was successful, False otherwise.
     """
-    try:
-        timestamp = int(unix_time_millis(datetime.now()))
-        with get_cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO lol_data (discord_username, last_game_recorded) VALUES (%(discord_username)s, %(last_game_recorded)s)",
-                {
-                    "discord_username": discord_username,
-                    "last_game_recorded": timestamp,
-                },
-            )
-    except Exception as error:
-        logger.critical(f"ERROR: {error}")
-        raise Exception(f"ERROR: {error}")
+    timestamp = int(unix_time_millis(datetime.now()))
+    with get_cursor() as cursor:
+        cursor.execute(
+            "INSERT INTO lol_data (discord_username, last_game_recorded) VALUES (%(discord_username)s, %(last_game_recorded)s)",
+            {
+                "discord_username": discord_username,
+                "last_game_recorded": timestamp,
+            },
+        )
