@@ -1,6 +1,7 @@
 """
 Interface for accessing riot API
 """
+from discord_ritoman.lru_cache import lru_cache
 from typing import Any
 from discord_ritoman.lol_match_metadata import LoLMatchMetadata
 import requests
@@ -14,6 +15,7 @@ logger.addHandler(logging.FileHandler("./lol_api.log"))
 RIOT_TOKEN = os.getenv("RIOT_TOKEN", None)
 
 
+@lru_cache
 def riot_api_get(url: str) -> Any:
     """
     Generic method for making a GET request to the riot API
