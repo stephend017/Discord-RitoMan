@@ -1,0 +1,27 @@
+{
+    "matches": [
+        {
+            "platformId": "NA1",
+            "gameId": 3676639301,
+            "champion": 24,
+            "queue": 420,
+            "season": 13,
+            "timestamp": 1606165409685,
+            "role": "DUO_SUPPORT",
+            "lane": "NONE"
+        },
+        {
+            "platformId": "NA1",
+            "gameId": 3676685956,
+            "champion": 86,
+            "queue": 420,
+            "season": 13,
+            "timestamp": 1606163888648,
+            "role": "DUO_SUPPORT",
+            "lane": "NONE"
+        }
+    ],
+    "startIndex": 0,
+    "endIndex": 100,
+    "totalGames": 213
+}
