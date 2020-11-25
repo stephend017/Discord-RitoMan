@@ -38,6 +38,10 @@ def handle_lol_loss(
         send_discord_message(
             f"{prefixes[prefix_index][0]} <@{user_info[2]}> {stat_prefixes_01[stat_prefix_01_index][0]} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index][0]}"
         )
+    else:
+        send_discord_message(
+            f"<@{user_info[2]}> got fucking trolled in their last game of league of legends. unlucky m8"
+        )
 
 
 def handle_lol_match(
