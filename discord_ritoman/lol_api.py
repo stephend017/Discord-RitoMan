@@ -6,6 +6,7 @@ from discord_ritoman.lol_match_metadata import LoLMatchMetadata
 import requests
 import os
 import logging
+import sys
 
 logger = logging.Logger("LoL API Logger")
 logger.addHandler(logging.FileHandler("./lol_api.log"))
@@ -33,6 +34,17 @@ def riot_api_get(url: str) -> Any:
     response = requests.get(url, headers=headers)
     if response.ok:
         return response.json()
+
+    if response.status_code == 403:
+        logger.critical("Invalid API token. Stopping program")
+        sys.exit(0)
+
+    if response.status_code == 429:
+        logger.warn(
+            f"Rate limit exceeded when making request [{response.text}]"
+        )
+        # TODO queue request
+        return
 
     logger.critical(
         f"GET riot request failed: URL: [{url}] [{response.status_code}] {response.text}"

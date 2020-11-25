@@ -18,6 +18,16 @@ class LoLMatchMetadata:
         """"""
         return f"<{self.__class__.__name__} {[f'{key}={value}' for key, value in self.__dict__.items()]}>"
 
+    def __eq__(self, other) -> bool:
+        if type(other) != type(self):
+            return False
+
+        return (
+            self.game_id == other.game_id
+            and self.champion == other.champion
+            and self.timestamp == other.timestamp
+        )
+
     def get_champion_name(self):
         """"""
         with open("./discord_ritoman/assets/champion.json", "r") as fp:
