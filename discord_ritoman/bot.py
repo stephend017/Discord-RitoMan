@@ -67,9 +67,7 @@ async def register(ctx, discord_user, summoner_name):
         await ctx.send("Failed to update discord_users db")
         return
 
-    try:
-        add_new_lol_user(username)
-    except Exception:
+    if not add_new_lol_user(username):
         logger.critical("Failed to update lol_data db")
         await ctx.send("Failed to update lol_data db")
         return
@@ -80,8 +78,7 @@ async def register(ctx, discord_user, summoner_name):
 
 
 def main():
-    """
-    """
+    """"""
     token: str = os.getenv("DISCORD_RITOMAN_BOT", None)
     if token is None:
         logger.critical("Failed to load Discord bot token.")
