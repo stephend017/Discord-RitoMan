@@ -24,12 +24,28 @@ logger.addHandler(logging.FileHandler("./api.log"))
 
 
 def handle_lol_loss(
-    data, user_info, account_id, prefixes, stat_prefixes_01, suffixes, champion
+    data: LoLMatchData,
+    user_info,
+    account_id,
+    prefixes,
+    stat_prefixes_01,
+    suffixes,
+    champion,
 ):
     """"""
     solo_kills: int = data.get_solo_kills(account_id)
     solo_deaths: int = data.get_solo_killed(account_id)
-    if solo_kills < solo_deaths:
+    kills, deaths = data.get_feeding_data()
+
+    if len(kills.keys()) < len(deaths.keys()):
+        hungry_bois = [
+            data.get_champion_name_from_pariticpant_id(key)
+            for key, _ in deaths.items()
+        ]
+        send_discord_message(
+            f"well well well, dinner has been served because <@{user_info[2]}> fed the absolute shit out of {','.join(hungry_bois)}"
+        )
+    elif solo_kills < solo_deaths:
         prefix_index: int = random.randint(0, len(prefixes) - 1)
         stat_prefix_01_index: int = random.randint(
             0, len(stat_prefixes_01) - 1
@@ -66,7 +82,7 @@ def handle_lol_match(
         )
         return
 
-    data = LoLMatchData(match_data, match_timeline)
+    data = LoLMatchData(match_data, match_timeline, account_id)
     champion = match.get_champion_name()
 
     # check if the user lost and had less solo kills
