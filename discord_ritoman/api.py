@@ -128,7 +128,7 @@ def run_lol():
     This is the function that updates and sends messages
     to the discord server for every bad game
     """
-    logging.info("Starting lol run")
+    logger.info("Starting lol run")
     users = get_all_discord_users()
     prefixes = get_all_prefixes()
     stat_prefixes_01 = get_all_stat_prefixes_01()
