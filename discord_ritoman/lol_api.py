@@ -27,7 +27,7 @@ my_handler = RotatingFileHandler(
 my_handler.setFormatter(log_formatter)
 my_handler.setLevel(logging.INFO)
 
-logger = logging.getLogger("root")
+logger = logging.getLogger("lol-api")
 logger.setLevel(logging.INFO)
 
 logger.addHandler(my_handler)

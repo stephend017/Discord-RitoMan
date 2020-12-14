@@ -37,7 +37,7 @@ my_handler = RotatingFileHandler(
 my_handler.setFormatter(log_formatter)
 my_handler.setLevel(logging.INFO)
 
-logger = logging.getLogger("root")
+logger = logging.getLogger("api")
 logger.setLevel(logging.INFO)
 
 logger.addHandler(my_handler)
@@ -128,6 +128,7 @@ def run_lol():
     This is the function that updates and sends messages
     to the discord server for every bad game
     """
+    logging.info("Starting lol run")
     users = get_all_discord_users()
     prefixes = get_all_prefixes()
     stat_prefixes_01 = get_all_stat_prefixes_01()
