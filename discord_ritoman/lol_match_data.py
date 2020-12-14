@@ -88,7 +88,7 @@ class LoLMatchData:
         returns a champion id from a participant id
         """
         champion_id = -1
-        for participant in self.data["participantIdentities"]:
+        for participant in self.data["participants"]:
             if participant["participantId"] == participant_id:
                 champion_id = participant["championId"]
                 break
