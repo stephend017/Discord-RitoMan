@@ -67,7 +67,7 @@ def handle_lol_loss(
                 for key, _ in deaths.items()
             ]
             send_discord_message(
-                f"well well well, dinner has been served because <@{user_info[2]}> fed the absolute shit out of {','.join(hungry_bois)}"
+                f"well well well, dinner has been served because <@{user_info[2]}> fed the absolute shit out of {', '.join(hungry_bois[:-1])} and {hungry_bois[-1]}"
             )
         elif solo_kills < solo_deaths:
             prefix_index: int = random.randint(0, len(prefixes) - 1)
