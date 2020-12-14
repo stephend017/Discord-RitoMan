@@ -53,9 +53,12 @@ def handle_lol_loss(
     champion,
 ):
     """"""
+    logger.info("HANDLING LOL LOSS")
     solo_kills: int = data.get_solo_kills(account_id)
     solo_deaths: int = data.get_solo_killed(account_id)
     kills, deaths = data.get_feeding_data()
+
+    logger.info("LOADED LOL LOSS DATA")
 
     if len(kills.keys()) < len(deaths.keys()):
         hungry_bois = [
@@ -78,6 +81,7 @@ def handle_lol_loss(
         send_discord_message(
             f"<@{user_info[2]}> got fucking trolled in their last game of league of legends. unlucky m8"
         )
+    logger.info("FINISHED PROCESSING LOL LOSS DATA")
 
 
 def handle_lol_match(
