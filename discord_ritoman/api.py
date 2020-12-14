@@ -102,8 +102,12 @@ def handle_lol_match(
         )
         return
 
+    logger.info("starting to load match data")
+
     data = LoLMatchData(match_data, match_timeline, account_id)
     champion = match.get_champion_name()
+
+    logger.info("successfully loaded match data")
 
     # check if the user lost and had less solo kills
     # than solo deaths
