@@ -2,7 +2,7 @@
 Interface for accessing riot API
 """
 from discord_ritoman.lru_cache import lru_cache
-from typing import Any
+from typing import Any, List
 from discord_ritoman.lol_match_metadata import LoLMatchMetadata
 import requests
 import os
@@ -35,13 +35,27 @@ logger.addHandler(my_handler)
 RIOT_TOKEN = os.getenv("RIOT_TOKEN", None)
 
 
+class RiotAPIResponseHandler:
+    """
+    class to define custom response behavior from the riot_api_get function
+    """
+
+    def __init__(self, status_code, handler):
+        self.status_code = status_code
+        self.handler = handler
+
+
 @lru_cache
-def riot_api_get(url: str) -> Any:
+def riot_api_get(
+    url: str, custom_handlers: List[RiotAPIResponseHandler] = []
+) -> Any:
     """
     Generic method for making a GET request to the riot API
 
     Args:
         url (str): the url endpoint of the request
+        custom_handlers (List[RiotAPIResponseHandler]): custom handlers for non 200
+            status codes
 
     Returns:
         Any: the json object returned by a successful request
@@ -56,6 +70,11 @@ def riot_api_get(url: str) -> Any:
     response = requests.get(url, headers=headers)
     if response.ok:
         return response.json()
+
+    # process custom handlers first
+    for ch in custom_handlers:
+        if ch.status_code == response.status_code:
+            return ch.handler(response)
 
     if response.status_code == 403:
         logger.critical("Invalid API token. Stopping program")
@@ -97,7 +116,10 @@ def get_account_id(puuid: str) -> str:
 def get_matches(account_id: str, start_timestamp: int):
     """"""
     url = f"https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/{account_id}?beginTime={start_timestamp}"
-    response = riot_api_get(url)
+    response = riot_api_get(
+        url, custom_handlers=RiotAPIResponseHandler(404, lambda response: [])
+    )
+
     return [
         LoLMatchMetadata(item["gameId"], item["champion"], item["timestamp"])
         for item in response["matches"]
