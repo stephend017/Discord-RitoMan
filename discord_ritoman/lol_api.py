@@ -1,7 +1,6 @@
 """
 Interface for accessing riot API
 """
-from discord_ritoman.lol_404_exception import LoL404Exception
 from discord_ritoman.lru_cache import lru_cache
 from typing import Any, List
 from discord_ritoman.lol_match_metadata import LoLMatchMetadata
