@@ -119,9 +119,9 @@ class LoLMatchData:
 
                         # handle kill data (used for feeding detection)
                         if event["killerId"] in self.kill_data["kills"]:
-                            self.kill_data["kills"][event["killedId"]] += 1
+                            self.kill_data["kills"][event["killerId"]] += 1
                         else:
-                            self.kill_data["kills"][event["killedId"]] = 1
+                            self.kill_data["kills"][event["killerId"]] = 1
 
                         if len(event["assistingParticipantIds"]) == 0:
                             self.kill_data["solo_kills"] += 1
@@ -138,9 +138,9 @@ class LoLMatchData:
 
                         # handle kill data (used for feeding detection)
                         if event["killerId"] in self.kill_data["deaths"]:
-                            self.kill_data["deaths"][event["killedId"]] += 1
+                            self.kill_data["deaths"][event["killerId"]] += 1
                         else:
-                            self.kill_data["deaths"][event["killedId"]] = 1
+                            self.kill_data["deaths"][event["killerId"]] = 1
 
                         if len(event["assistingParticipantIds"]) == 0:
                             self.kill_data["solo_deaths"] += 1
