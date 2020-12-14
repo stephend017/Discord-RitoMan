@@ -134,6 +134,8 @@ def run_lol():
     stat_prefixes_01 = get_all_stat_prefixes_01()
     suffixes = get_all_suffixes()
 
+    logger.info(",".join(userinfo[0] for userinfo in users))
+
     for user_info in users:
         logger.info(f"processing user {user_info[0]}")
         timestamp = get_last_recorded_time(user_info[0])
