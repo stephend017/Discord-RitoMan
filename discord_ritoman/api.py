@@ -60,27 +60,31 @@ def handle_lol_loss(
 
     logger.info("LOADED LOL LOSS DATA")
 
-    if len(kills.keys()) < len(deaths.keys()):
-        hungry_bois = [
-            data.get_champion_name_from_pariticpant_id(key)
-            for key, _ in deaths.items()
-        ]
-        send_discord_message(
-            f"well well well, dinner has been served because <@{user_info[2]}> fed the absolute shit out of {','.join(hungry_bois)}"
-        )
-    elif solo_kills < solo_deaths:
-        prefix_index: int = random.randint(0, len(prefixes) - 1)
-        stat_prefix_01_index: int = random.randint(
-            0, len(stat_prefixes_01) - 1
-        )
-        suffix_index: int = random.randint(0, len(suffixes) - 1)
-        send_discord_message(
-            f"{prefixes[prefix_index][0]} <@{user_info[2]}> {stat_prefixes_01[stat_prefix_01_index][0]} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index][0]}"
-        )
-    else:
-        send_discord_message(
-            f"<@{user_info[2]}> got fucking trolled in their last game of league of legends. unlucky m8"
-        )
+    try:
+        if len(kills.keys()) < len(deaths.keys()):
+            hungry_bois = [
+                data.get_champion_name_from_pariticpant_id(key)
+                for key, _ in deaths.items()
+            ]
+            send_discord_message(
+                f"well well well, dinner has been served because <@{user_info[2]}> fed the absolute shit out of {','.join(hungry_bois)}"
+            )
+        elif solo_kills < solo_deaths:
+            prefix_index: int = random.randint(0, len(prefixes) - 1)
+            stat_prefix_01_index: int = random.randint(
+                0, len(stat_prefixes_01) - 1
+            )
+            suffix_index: int = random.randint(0, len(suffixes) - 1)
+            send_discord_message(
+                f"{prefixes[prefix_index][0]} <@{user_info[2]}> {stat_prefixes_01[stat_prefix_01_index][0]} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index][0]}"
+            )
+        else:
+            send_discord_message(
+                f"<@{user_info[2]}> got fucking trolled in their last game of league of legends. unlucky m8"
+            )
+    except Exception as error:
+        logger.critical(error)
+
     logger.info("FINISHED PROCESSING LOL LOSS DATA")
 
 
