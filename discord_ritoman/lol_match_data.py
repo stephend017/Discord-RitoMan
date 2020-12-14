@@ -95,10 +95,10 @@ class LoLMatchData:
 
         with open("./discord_ritoman/assets/champion.json", "r") as fp:
             champion_file = json.load(fp)
-            for champion_name, _ in champion_file["data"].items():
-                if champion_id == self.champion:
+            for champion_name, champion_data in champion_file["data"].items():
+                if champion_id == int(champion_data["key"]):
                     return champion_name
-        raise Exception(f"Unable to find champion with key={self.champion}")
+        raise Exception(f"Unable to find champion with key={champion_id}")
 
     def _process_kill_data(self, account_id: str):
         """
