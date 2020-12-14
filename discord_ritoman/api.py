@@ -60,14 +60,18 @@ def handle_lol_loss(
 
     logger.info("LOADED LOL LOSS DATA")
 
+    total_deaths = data.get_total_deaths()
+    max_solo_deaths_to_champ = 0
+    champ = 0
+    for key, value in deaths.items():
+        if value > max_solo_deaths_to_champ:
+            champ = key
+            max_solo_deaths_to_champ = value
+
     try:
-        if len(kills.keys()) < len(deaths.keys()):
-            hungry_bois = [
-                data.get_champion_name_from_pariticpant_id(key)
-                for key, _ in deaths.items()
-            ]
+        if max_solo_deaths_to_champ >= total_deaths / 2:
             send_discord_message(
-                f"well well well, dinner has been served because <@{user_info[2]}> fed the absolute shit out of {', '.join(hungry_bois[:-1])} and {hungry_bois[-1]}"
+                f"well well well, dinner has been served because <@{user_info[2]}> fed the absolute shit out of {data.get_champion_name_from_pariticpant_id(champ)} by giving them {max_solo_deaths_to_champ} kills"
             )
         elif solo_kills < solo_deaths:
             prefix_index: int = random.randint(0, len(prefixes) - 1)

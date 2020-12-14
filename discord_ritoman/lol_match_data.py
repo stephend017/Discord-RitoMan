@@ -13,6 +13,8 @@ class LoLMatchData:
         self.kill_data["deaths"] = {}
         self.kill_data["solo_kills"] = 0
         self.kill_data["solo_deaths"] = 0
+        self.kill_data["total_kills"] = 0
+        self.kill_data["total_deaths"] = 0
         self._process_deaths(account_id)
 
     def winning_team(self) -> int:
@@ -44,6 +46,14 @@ class LoLMatchData:
     def get_solo_killed(self, account_id: str) -> int:
         """"""
         return self.kill_data["solo_deaths"]
+
+    def get_total_kills(self):
+        """"""
+        return self.kill_data["total_kills"]
+
+    def get_total_deaths(self):
+        """"""
+        return self.kill_data["total_deaths"]
 
     def get_match_end(self):
         """"""
@@ -116,15 +126,15 @@ class LoLMatchData:
             for event in frame["events"]:
                 if event["type"] == "CHAMPION_KILL":
                     if event["killerId"] == participant_id:
-
-                        # handle kill data (used for feeding detection)
-                        if event["victimId"] in self.kill_data["kills"]:
-                            self.kill_data["kills"][event["victimId"]] += 1
-                        else:
-                            self.kill_data["kills"][event["victimId"]] = 1
-
+                        self.kill_data["total_kills"] += 1
                         if len(event["assistingParticipantIds"]) == 0:
                             self.kill_data["solo_kills"] += 1
+
+                            # handle kill data (used for feeding detection)
+                            if event["victimId"] in self.kill_data["kills"]:
+                                self.kill_data["kills"][event["victimId"]] += 1
+                            else:
+                                self.kill_data["kills"][event["victimId"]] = 1
 
     def _process_deaths(self, account_id: str):
         """
@@ -135,12 +145,15 @@ class LoLMatchData:
             for event in frame["events"]:
                 if event["type"] == "CHAMPION_KILL":
                     if event["victimId"] == participant_id:
-
-                        # handle kill data (used for feeding detection)
-                        if event["killerId"] in self.kill_data["deaths"]:
-                            self.kill_data["deaths"][event["killerId"]] += 1
-                        else:
-                            self.kill_data["deaths"][event["killerId"]] = 1
+                        self.kill_data["total_deaths"] += 1
 
                         if len(event["assistingParticipantIds"]) == 0:
                             self.kill_data["solo_deaths"] += 1
+
+                            # handle kill data (used for feeding detection)
+                            if event["killerId"] in self.kill_data["deaths"]:
+                                self.kill_data["deaths"][
+                                    event["killerId"]
+                                ] += 1
+                            else:
+                                self.kill_data["deaths"][event["killerId"]] = 1
