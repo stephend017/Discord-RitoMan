@@ -31,8 +31,18 @@ class LoLMatchData:
                 return participant["participantId"]
         raise Exception("Failed to get participantId")
 
+    def get_team_id(self):
+        """
+        returns the teamId of this user
+        """
+        participant_id = self.get_participant_id(self.account_id)
+        for participant in self.data["participants"]:
+            if participant["participantId"] == participant_id:
+                return participant["teamId"]
+
     def did_account_win(self, account_id: str) -> bool:
         """"""
+        # TODO refactor with code above
         participant_id = self.get_participant_id(account_id)
         for participant in self.data["participants"]:
             if participant["participantId"] == participant_id:
@@ -109,6 +119,20 @@ class LoLMatchData:
                 if champion_id == int(champion_data["key"]):
                     return champion_name
         raise Exception(f"Unable to find champion with key={champion_id}")
+
+    def has_max_team_deaths(self):
+        """
+        Returns true if this user has the most deaths on their team, false otherwise
+        """
+        teamId = self.get_team_id()
+        max_deaths = self.kill_data["total_deaths"]
+        for participant in self.data["participants"]:
+            if (
+                participant["teamId"] == teamId
+                and participant["stats"]["deaths"] > max_deaths
+            ):
+                return False
+        return True
 
     def _process_kill_data(self, account_id: str):
         """
