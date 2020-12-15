@@ -69,10 +69,20 @@ def handle_lol_loss(
             max_solo_deaths_to_champ = value
 
     try:
-        if max_solo_deaths_to_champ >= total_deaths / 2:
-            send_discord_message(
-                f"well well well, dinner has been served because <@{user_info[2]}> fed the absolute shit out of {data.get_champion_name_from_pariticpant_id(champ)} by giving them {max_solo_deaths_to_champ} kills"
-            )
+        if (
+            max_solo_deaths_to_champ >= total_deaths / 2
+            and data.has_max_team_deaths()
+        ):
+            message = f"well well well, dinner has been served because <@{user_info[2]}> fed the absolute shit out of {data.get_champion_name_from_pariticpant_id(champ)} giving them "
+
+            if max_solo_deaths_to_champ == solo_deaths:
+                message += (
+                    f"all {max_solo_deaths_to_champ} of their solo deaths"
+                )
+            else:
+                message += f"{max_solo_deaths_to_champ} / {solo_deaths} of their solo deaths"
+
+            send_discord_message(message)
         elif solo_kills < solo_deaths:
             prefix_index: int = random.randint(0, len(prefixes) - 1)
             stat_prefix_01_index: int = random.randint(
