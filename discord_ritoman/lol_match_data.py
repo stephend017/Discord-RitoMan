@@ -51,7 +51,7 @@ class LoLMatchData:
 
     def get_solo_kills(self, account_id: str) -> int:
         """"""
-        self.kill_data["solo_kills"]
+        return self.kill_data["solo_kills"]
 
     def get_solo_killed(self, account_id: str) -> int:
         """"""
