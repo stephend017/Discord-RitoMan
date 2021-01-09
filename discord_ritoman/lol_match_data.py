@@ -15,7 +15,7 @@ class LoLMatchData:
         self.kill_data["solo_deaths"] = 0
         self.kill_data["total_kills"] = 0
         self.kill_data["total_deaths"] = 0
-        self._process_deaths(account_id)
+        self._process_kill_data(account_id)
 
     def winning_team(self) -> int:
         """"""
