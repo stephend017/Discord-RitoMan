@@ -103,16 +103,15 @@ def test_get_puuid(mock_riot_api_get):
         assert account_id == data["puuid"]
 
 
-@mock.patch.object(discord_ritoman.lol_api.requests, "get")
-def test_cached_requests(mock_get):
+@mock.patch.object(discord_ritoman.lol_api, "riot_api_get")
+def test_cached_requests(mock_riot_api_get):
     """
-    Tests that when the a request returns as rate limited,
-    the application logs the error, then queues the request
-    to be run again in a set time (most likely 1 sec)
+    Tests that when the same request is made, the LRU correctly
+    works and only executes the corresponding code once (returns cached result)
     """
-    expected = {"test": 6}
-    mock_get.return_value = MockResponse(200, "Rate Limit Exceeded", expected)
-    r0 = riot_api_get("anotherfakeurl")
-    r1 = riot_api_get("anotherfakeurl")
-    mock_get.assert_called_once()
+    expected = "randomaccountid"
+    mock_riot_api_get.return_value = {"accountId": "randomaccountid"}
+    r0 = get_account_id("randompuuid")
+    r1 = get_account_id("randompuuid")
+    mock_riot_api_get.assert_called_once()
     assert expected == r0 == r1
