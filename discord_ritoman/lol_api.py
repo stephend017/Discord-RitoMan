@@ -45,7 +45,6 @@ class RiotAPIResponseHandler:
         self.handler = handler
 
 
-@lru_cache
 def riot_api_get(
     url: str, custom_handlers: List[RiotAPIResponseHandler] = []
 ) -> Any:
@@ -95,6 +94,7 @@ def riot_api_get(
     )
 
 
+@lru_cache
 def get_account_id(puuid: str) -> str:
     """
     Returns the accountId for a given riot puuid
@@ -126,6 +126,7 @@ def get_matches(account_id: str, start_timestamp: int):
     ]
 
 
+@lru_cache
 def get_match_data(match_id: int) -> Any:
     """
     Returns all the match data for a given match
@@ -145,6 +146,7 @@ def get_match_data(match_id: int) -> Any:
     return riot_api_get(url)
 
 
+@lru_cache
 def get_match_timeline(match_id: int) -> Any:
     """
     Returns a timeline of the match
@@ -159,6 +161,7 @@ def get_match_timeline(match_id: int) -> Any:
     return riot_api_get(url)
 
 
+@lru_cache
 def get_puuid(summoner_name: str) -> str:
     """
     Returns a riot puuid based on a summoner name
