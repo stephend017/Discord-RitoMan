@@ -95,6 +95,33 @@ def db_insert(func: Callable):
     return wrapper
 
 
+def db_delete(func: Callable):
+    """
+    Wrapper for database delete functions.
+
+    This wrapper provides logging and basic error
+    handling for db functions
+
+    Args:
+        func (Callable): the database delete function to call
+
+    Returns:
+        Callable: function that calls the passed in function
+            and logs errors
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception as error:
+            logger.critical(f"ERROR: {error}")
+            return False
+        return True
+
+    return wrapper
+
+
 def db_update(func: Callable):
     """
     Wrapper for database update functions.
@@ -319,6 +346,24 @@ def opt_in_record_lol_winrate(discord_username: str) -> bool:
                 "win_count": 0,
                 "loss_count": 0,
             },
+        )
+
+
+@db_delete
+def opt_out_record_lol_winrate(discord_username: str) -> bool:
+    """
+    Adds a user to the winrate db  for LoL games
+
+    Args:
+        discord_username (str): the username of the discord member
+
+    Returns:
+        bool: True if the operation succeeded, False otherwise
+    """
+    with get_cursor() as cursor:
+        cursor.execute(
+            "DELETE FROM lol_winrate WHERE discord_username = %(discord_username)s",
+            {"discord_username": discord_username},
         )
 
 

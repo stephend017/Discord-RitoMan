@@ -2,7 +2,13 @@ from discord_ritoman.lol_api import get_puuid
 from discord.ext import commands
 import os
 import logging
-from discord_ritoman.db_api import add_new_discord_user, add_new_lol_user
+from discord_ritoman.db_api import (
+    add_new_discord_user,
+    add_new_lol_user,
+    get_discord_lol_record,
+    opt_in_record_lol_winrate,
+    opt_out_record_lol_winrate,
+)
 
 from discord.user import User
 
@@ -75,6 +81,42 @@ async def register(ctx, discord_user, summoner_name):
     await ctx.send(
         f"successfully added <@!{user_id}> as the summoner {summoner_name} to the DB"
     )
+
+
+@bot.command()
+async def winrate(ctx, option, discord_user):
+    """
+    The winrate command for the discord ritoman bot
+
+    Args:
+        option: What specific subcommand to run (--add, --remove, --get)
+        discord_user: should be a server member in the form of @username
+    """
+    user_id = discord_user[3:-1]
+    user: User = None
+
+    try:
+        user = await bot.fetch_user(int(user_id))
+    except Exception:
+        logger.error("Failed to fetch user discord ID")
+        await ctx.send("Failed to fetch user discord ID")
+        return
+
+    username = user.name
+
+    if option == "--add":
+        opt_in_record_lol_winrate(username)
+        await ctx.send(f"successfully added {username}")
+    if option == "--remove":
+        opt_out_record_lol_winrate(username)
+        await ctx.send(f"successfully removed {username}")
+    if option == "--get":
+        record = get_discord_lol_record(username)
+        await ctx.send(
+            f"the winrate for <!@{user_id}> today is {record[0]} wins and {record[1]} losses"
+        )
+    else:
+        await ctx.send(f"<:PepoG:773739956958658560>")
 
 
 def main():
