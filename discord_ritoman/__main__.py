@@ -7,7 +7,7 @@ def main():
     """"""
     schedule.every(5).minutes.do(run_lol)
 
-    schedule.every().days.at("00:00:00")(dump_lol_winrate)
+    schedule.every().days.at("00:00:00").do(dump_lol_winrate)
 
     # run initially
     run_lol()
