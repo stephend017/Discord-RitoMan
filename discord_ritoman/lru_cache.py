@@ -37,7 +37,7 @@ class LRUCache:
         return self._hash_map[key]
 
 
-cache = LRUCache(5)
+cache = LRUCache(50)
 
 
 def lru_cache(func):
