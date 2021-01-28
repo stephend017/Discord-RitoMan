@@ -116,7 +116,7 @@ async def winrate(ctx, option, discord_user):
             f"the winrate for <!@{user_id}> today is {record[0]} wins and {record[1]} losses"
         )
     else:
-        await ctx.send(f"<:PepoG:773739956958658560>")
+        await ctx.send("<:PepoG:773739956958658560>")
 
 
 def main():
