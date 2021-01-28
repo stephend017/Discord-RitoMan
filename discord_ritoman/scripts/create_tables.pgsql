@@ -21,3 +21,10 @@ CREATE TABLE IF NOT EXISTS stat_prefixes_01 (
 CREATE TABLE IF NOT EXISTS suffixes (
     suffix text PRIMARY KEY
 );
+
+CREATE TABLE IF NOT EXISTS lol_winrate (
+    discord_username varchar(255) PRIMARY KEY,
+    win_count int,
+    loss_count int,
+    FOREIGN KEY (discord_username) REFERENCES discord_users (discord_username)
+)
