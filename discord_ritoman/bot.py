@@ -1,7 +1,8 @@
 from discord_ritoman.lol_api import get_puuid
 from discord.ext import commands
 import os
-import logging
+
+# import logging
 from discord_ritoman.db_api import (
     add_new_discord_user,
     add_new_lol_user,
@@ -9,13 +10,15 @@ from discord_ritoman.db_api import (
     opt_in_record_lol_winrate,
     opt_out_record_lol_winrate,
 )
+from discord_ritoman.utils import create_logger
 
 from discord.user import User
 
 bot = commands.Bot(command_prefix="<@!779328785043554334> ")
 
-logger = logging.Logger("Discord Bot Logger")
-logger.addHandler(logging.FileHandler("./bot.log"))
+# logger = logging.Logger("Discord Bot Logger")
+# logger.addHandler(logging.FileHandler("./bot.log"))
+logger = create_logger(__file__)
 
 
 @bot.command()

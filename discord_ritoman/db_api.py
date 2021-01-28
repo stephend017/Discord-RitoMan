@@ -11,37 +11,39 @@ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgres
 
 from datetime import datetime
 from discord_ritoman.models import GameResult
-from typing import Any, Callable, List, Tuple
+from typing import Any, Callable, List
 import psycopg2
 from psycopg2.extras import DictCursor
 from contextlib import contextmanager
 import os
-from discord_ritoman.utils import unix_time_millis
+from discord_ritoman.utils import create_logger, unix_time_millis
 import functools
-import logging
-from logging.handlers import RotatingFileHandler
 
-log_formatter = logging.Formatter(
-    "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s"
-)
+# import logging
+# from logging.handlers import RotatingFileHandler
 
-logFile = "./db.log"
+# log_formatter = logging.Formatter(
+#     "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s"
+# )
 
-my_handler = RotatingFileHandler(
-    logFile,
-    mode="a",
-    maxBytes=5 * 1024 * 1024,
-    backupCount=2,
-    encoding=None,
-    delay=0,
-)
-my_handler.setFormatter(log_formatter)
-my_handler.setLevel(logging.INFO)
+# logFile = "./db.log"
 
-logger = logging.getLogger("db")
-logger.setLevel(logging.INFO)
+# my_handler = RotatingFileHandler(
+#     logFile,
+#     mode="a",
+#     maxBytes=5 * 1024 * 1024,
+#     backupCount=2,
+#     encoding=None,
+#     delay=0,
+# )
+# my_handler.setFormatter(log_formatter)
+# my_handler.setLevel(logging.INFO)
 
-logger.addHandler(my_handler)
+# logger = logging.getLogger("db")
+# logger.setLevel(logging.INFO)
+
+# logger.addHandler(my_handler)
+logger = create_logger(__file__)
 
 
 @contextmanager

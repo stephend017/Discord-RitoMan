@@ -1,30 +1,33 @@
 import os
 import requests
 
-import logging
-from logging.handlers import RotatingFileHandler
+from discord_ritoman.utils import create_logger
 
-log_formatter = logging.Formatter(
-    "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s"
-)
+# import logging
+# from logging.handlers import RotatingFileHandler
 
-logFile = "./discord_api.log"
+# log_formatter = logging.Formatter(
+#     "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s"
+# )
 
-my_handler = RotatingFileHandler(
-    logFile,
-    mode="a",
-    maxBytes=5 * 1024 * 1024,
-    backupCount=2,
-    encoding=None,
-    delay=0,
-)
-my_handler.setFormatter(log_formatter)
-my_handler.setLevel(logging.INFO)
+# logFile = "./discord_api.log"
 
-logger = logging.getLogger("discord-api")
-logger.setLevel(logging.INFO)
+# my_handler = RotatingFileHandler(
+#     logFile,
+#     mode="a",
+#     maxBytes=5 * 1024 * 1024,
+#     backupCount=2,
+#     encoding=None,
+#     delay=0,
+# )
+# my_handler.setFormatter(log_formatter)
+# my_handler.setLevel(logging.INFO)
 
-logger.addHandler(my_handler)
+# logger = logging.getLogger("discord-api")
+# logger.setLevel(logging.INFO)
+
+# logger.addHandler(my_handler)
+logger = create_logger(__file__)
 
 
 def send_discord_message(message: str):
