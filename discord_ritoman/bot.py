@@ -107,10 +107,10 @@ async def winrate(ctx, option, discord_user):
     if option == "--add":
         opt_in_record_lol_winrate(username)
         await ctx.send(f"successfully added {username}")
-    if option == "--remove":
+    elif option == "--remove":
         opt_out_record_lol_winrate(username)
         await ctx.send(f"successfully removed {username}")
-    if option == "--get":
+    elif option == "--get":
         record = get_discord_lol_record(username)
         await ctx.send(
             f"the winrate for <!@{user_id}> today is {record[0]} wins and {record[1]} losses"
