@@ -10,7 +10,8 @@ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgres
 """
 
 from datetime import datetime
-from typing import Any, Callable, List
+from discord_ritoman.models import GameResult
+from typing import Any, Callable, List, Tuple
 import psycopg2
 from psycopg2.extras import DictCursor
 from contextlib import contextmanager
@@ -300,6 +301,28 @@ def add_new_discord_user(
 
 
 @db_insert
+def opt_in_record_lol_winrate(discord_username: str) -> bool:
+    """
+    Adds a user to the winrate db  for LoL games
+
+    Args:
+        discord_username (str): the username of the discord member
+
+    Returns:
+        bool: True if the operation succeeded, False otherwise
+    """
+    with get_cursor() as cursor:
+        cursor.execute(
+            "INSERT INTO lol_winrate (discord_username, win_count, loss_count) VALUES (%(discord_username)s, %(win_count)s, %(loss_count)s)",
+            {
+                "discord_username": discord_username,
+                "win_count": 0,
+                "loss_count": 0,
+            },
+        )
+
+
+@db_insert
 def add_new_lol_user(discord_username: str) -> bool:
     """
     Adds a new user to be tracked for LoL games
@@ -321,3 +344,106 @@ def add_new_lol_user(discord_username: str) -> bool:
                 "last_game_recorded": timestamp,
             },
         )
+
+
+@db_select
+def get_discord_lol_record(discord_username: str) -> List[int]:
+    """
+    Returns a tuple of the given users, win / loss record for league games
+    that day
+
+    Args:
+        discord_username (str): the username of the discord member
+
+    Returns:
+        List[int]: the game record for the given discord user.
+    """
+    data = {}
+    with get_cursor() as cursor:
+        cursor.execute(
+            "SELECT win_count, loss_count FROM lol_winrate WHERE discord_username = %(discord_username)s",
+            {"discord_username": discord_username},
+        )
+        data = cursor.fetchall()
+    return data[0]
+
+
+@db_select
+def get_all_lol_users_winrate() -> List[List[Any]]:
+    """
+    returns the winrate for all users in the winrate db
+
+    Returns:
+        List[List[Any]]: a list of users in the winrate db
+    """
+    result = []
+    with get_cursor() as cursor:
+        cursor.execute(
+            "SELECT discord_id, win_count, loss_count FROM lol_winrate INNER JOIN discord_users on lol_winrate.discord_username = disocrd_users.discord_username"
+        )
+        result = cursor.fetchall()
+    return result
+
+
+@db_update
+def add_new_lol_game(discord_username: str, game_result: GameResult) -> bool:
+    """
+    Adds a new game result to the db
+
+    Note this db is wiped after dumped
+
+    Args:
+        discord_username (str): the username of the discord member
+        game_result (GameResult): the result of the game
+
+    Returns:
+        bool: True if the operation was successful, False otherwise
+    """
+    record = get_discord_lol_record(discord_username)
+    with get_cursor() as cursor:
+        cursor.execute(
+            "UPDATE lol_winrate SET win_count = %(win_count)s, loss_count = %(loss_count)s WHERE discord_username = %(discord_username)s",
+            {
+                "win_count": (1 if game_result == GameResult.WIN else 0)
+                + record[0],
+                "loss_count": (1 if game_result == GameResult.LOSS else 0)
+                + record[1],
+                "discord_username": discord_username,
+            },
+        )
+
+
+@db_update
+def reset_all_lol_user_winrates() -> bool:
+    """
+    Resets the winrate of all users back to 0-0
+
+    Returns:
+        bool: True if the operation succeeds, false otherwise
+    """
+    with get_cursor() as cursor:
+        cursor.execute(
+            "UPDATE lol_winrate SET win_count = %(win_count)s, loss_count = %(loss_count)s",
+            {"win_count": 0, "loss_count": 0},
+        )
+
+
+@db_select
+def does_user_record_lol_winrate(discord_username: str) -> bool:
+    """
+    Returns true if the user records winrate, false otherwise
+
+    Args:
+        discord_username (str): the username of ther discord member
+
+    Returns:
+        bool: True if the user exists, False otherwise
+    """
+    result = 0
+    with get_cursor() as cursor:
+        cursor.execute(
+            "SELECT count(*) FROM lol_winrate WHERE discord_username = %(discord_username)s",
+            {"discord_username": discord_username},
+        )
+        result = cursor.fetchall()[0]
+    return result > 0

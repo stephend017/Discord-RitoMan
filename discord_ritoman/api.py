@@ -1,10 +1,14 @@
+from discord_ritoman.models import GameResult
 from discord_ritoman.discord_api import send_discord_message
 from typing import Any, Dict, List
 from discord_ritoman.lol_match_metadata import LoLMatchMetadata
 from discord_ritoman.db_api import (
+    add_new_lol_game,
     get_all_discord_users,
+    get_all_lol_users_winrate,
     get_all_prefixes,
     get_last_recorded_time,
+    reset_all_lol_user_winrates,
     set_last_recorded_time,
     get_all_stat_prefixes_01,
     get_all_suffixes,
@@ -143,6 +147,9 @@ def handle_lol_match(
             suffixes,
             champion,
         )
+        add_new_lol_game(user_info[0], GameResult.LOSS)
+    else:
+        add_new_lol_game(user_info[0], GameResult.WIN)
 
     match_end = data.get_match_end()
     if match_end > timestamp:
@@ -196,3 +203,33 @@ def run_lol():
                 stat_prefixes_01,
                 suffixes,
             )
+
+
+def dump_lol_winrate():
+    """
+    sends a discord message at 12 AM EST with the winrate
+    for everyone who played that day
+    """
+
+    logger.info("starting winrate dump")
+    users = get_all_lol_users_winrate()
+
+    send_discord_message(
+        "good evening degens, I'm here to glorify those who carried and shame those who inted"
+    )
+
+    for user in users:
+        discord_id = user[0]
+        wins = user[1]
+        losses = user[2]
+        if wins > losses:
+            send_discord_message(
+                f"<@{discord_id}> carried today with {wins} wins and {losses} losses, good job summoner"
+            )
+        else:
+            send_discord_message(
+                f"<@{discord_id}> inted today with {wins} wins and {losses} losses. you fucked up, but im sure it was your team who trolled and not your fault"
+            )
+
+    logger.info("wiping todays stats")
+    reset_all_lol_user_winrates()
