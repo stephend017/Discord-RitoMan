@@ -447,6 +447,10 @@ def add_new_lol_game(discord_username: str, game_result: GameResult) -> bool:
         bool: True if the operation was successful, False otherwise
     """
     record = get_discord_lol_record(discord_username)
+    logger.info(
+        f"{discord_username} currently has {record[0]} wins and {record[1]} losses"
+    )
+    logger.info(f"the current game result is {game_result}")
     with get_cursor() as cursor:
         cursor.execute(
             "UPDATE lol_winrate SET win_count = %(win_count)s, loss_count = %(loss_count)s WHERE discord_username = %(discord_username)s",

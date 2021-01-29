@@ -156,6 +156,7 @@ def handle_lol_match(
         add_new_lol_game(user_info[0], GameResult.WIN)
 
     match_end = data.get_match_end()
+    logger.info(f"{match_end} > {timestamp}")
     if match_end > timestamp:
         set_last_recorded_time(user_info[0], data.get_match_end())
 
