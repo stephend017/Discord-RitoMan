@@ -493,8 +493,8 @@ def does_user_record_lol_winrate(discord_username: str) -> bool:
     result = 0
     with get_cursor() as cursor:
         cursor.execute(
-            "SELECT count(*) FROM lol_winrate WHERE discord_username = %(discord_username)s",
+            "SELECT * FROM lol_winrate WHERE discord_username = %(discord_username)s",
             {"discord_username": discord_username},
         )
-        result = cursor.fetchall()[0]
-    return result > 0
+        result = cursor.fetchall()
+    return len(result) > 0
