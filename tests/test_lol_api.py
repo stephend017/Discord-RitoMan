@@ -115,3 +115,14 @@ def test_cached_requests(mock_riot_api_get):
     r1 = get_account_id("randompuuid")
     mock_riot_api_get.assert_called_once()
     assert expected == r0 == r1
+
+
+@mock.patch.object(discord_ritoman.lol_api.requests, "get")
+def test_get_matches_404(mock_get):
+    """
+    tests that when get matches returns 404 (no matches found) the response returned
+    from riot_api_get is {"matches": []} which is equivalent to no matches
+    """
+    mock_get.return_value = MockResponse(404, "Not Found")
+    result = get_matches("test", "test")
+    assert result == []
