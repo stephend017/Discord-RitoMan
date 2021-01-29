@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 from discord_ritoman.lol_match_metadata import LoLMatchMetadata
 from discord_ritoman.db_api import (
     add_new_lol_game,
+    does_user_record_lol_winrate,
     get_all_discord_users,
     get_all_lol_users_winrate,
     get_all_prefixes,
@@ -151,9 +152,11 @@ def handle_lol_match(
             suffixes,
             champion,
         )
-        add_new_lol_game(user_info[0], GameResult.LOSS)
+        if does_user_record_lol_winrate(user_info[0]):
+            add_new_lol_game(user_info[0], GameResult.LOSS)
     else:
-        add_new_lol_game(user_info[0], GameResult.WIN)
+        if does_user_record_lol_winrate(user_info[0]):
+            add_new_lol_game(user_info[0], GameResult.WIN)
 
     match_end = data.get_match_end()
     logger.info(f"{match_end} > {timestamp}")
