@@ -46,9 +46,11 @@ def lru_cache(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         key = (
+            func.__name__ + "("
             ",".join([str(arg) for arg in args])
             + ","
             + ",".join([f"{key}={value}" for key, value in kwargs.items()])
+            + ")"
         )
 
         value = cache.lookup(key)
