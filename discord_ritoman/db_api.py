@@ -426,7 +426,7 @@ def get_all_lol_users_winrate() -> List[List[Any]]:
     result = []
     with get_cursor() as cursor:
         cursor.execute(
-            "SELECT discord_id, win_count, loss_count FROM lol_winrate INNER JOIN discord_users on lol_winrate.discord_username = disocrd_users.discord_username"
+            "SELECT discord_id, win_count, loss_count FROM lol_winrate INNER JOIN discord_users on lol_winrate.discord_username = discord_users.discord_username"
         )
         result = cursor.fetchall()
     return result
