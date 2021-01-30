@@ -116,7 +116,7 @@ async def winrate(ctx, option, discord_user):
     elif option == "--get":
         record = get_discord_lol_record(username)
         await ctx.send(
-            f"the winrate for <!@{user_id}> today is {record[0]} wins and {record[1]} losses"
+            f"the winrate for <@!{user_id}> today is {record[0]} wins and {record[1]} losses"
         )
     else:
         await ctx.send("<:PepoG:773739956958658560>")
