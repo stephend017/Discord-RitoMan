@@ -6,6 +6,7 @@ import os
 from discord_ritoman.db_api import (
     add_new_discord_user,
     add_new_lol_user,
+    does_user_record_lol_winrate,
     get_discord_lol_record,
     opt_in_record_lol_winrate,
     opt_out_record_lol_winrate,
@@ -108,18 +109,24 @@ async def winrate(ctx, option, discord_user):
     username = user.name
 
     if option == "--add":
-        opt_in_record_lol_winrate(username)
-        await ctx.send(f"successfully added {username}")
+        if does_user_record_lol_winrate(username):
+            opt_in_record_lol_winrate(username)
+            await ctx.send(f"successfully added {username}")
+            return
     elif option == "--remove":
-        opt_out_record_lol_winrate(username)
-        await ctx.send(f"successfully removed {username}")
+        if not does_user_record_lol_winrate(username):
+            opt_out_record_lol_winrate(username)
+            await ctx.send(f"successfully removed {username}")
+            return
     elif option == "--get":
-        record = get_discord_lol_record(username)
-        await ctx.send(
-            f"the winrate for <@!{user_id}> today is {record[0]} wins and {record[1]} losses"
-        )
-    else:
-        await ctx.send("<:PepoG:773739956958658560>")
+        if not does_user_record_lol_winrate(username):
+            record = get_discord_lol_record(username)
+            await ctx.send(
+                f"the winrate for <@!{user_id}> today is {record[0]} wins and {record[1]} losses"
+            )
+            return
+
+    await ctx.send("<:PepoG:773739956958658560>")
 
 
 def main():
