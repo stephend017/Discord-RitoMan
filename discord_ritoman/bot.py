@@ -46,11 +46,11 @@ async def register(ctx, discord_user, summoner_name):
     Note: if `summoner_name` is mulitple words it must be surrounded
         by quotes. example "Fwee ba Jee Ba"
     """
-    user_id = discord_user[3:-1]
+    user_id = int(discord_user[3:-1])
     user: User = None
 
     try:
-        user = await bot.fetch_user(int(user_id))
+        user = await bot.fetch_user(user_id)
     except Exception:
         logger.error("Failed to fetch user discord ID")
         await ctx.send("Failed to fetch user discord ID")
@@ -70,9 +70,13 @@ async def register(ctx, discord_user, summoner_name):
         )
         return
 
-    try:
-        add_new_discord_user(username, riot_puuid, user_id)
-    except Exception:
+    # try:
+    #     add_new_discord_user(username, riot_puuid, user_id)
+    # except Exception:
+    #     logger.critical("Failed to update discord_users db")
+    #     await ctx.send("Failed to update discord_users db")
+    #     return
+    if not add_new_discord_user(username, riot_puuid, user_id):
         logger.critical("Failed to update discord_users db")
         await ctx.send("Failed to update discord_users db")
         return
