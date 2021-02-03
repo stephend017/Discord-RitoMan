@@ -498,3 +498,24 @@ def does_user_record_lol_winrate(discord_username: str) -> bool:
         )
         result = cursor.fetchall()
     return len(result) > 0
+
+
+@db_select
+def is_user_registered(discord_username: str) -> bool:
+    """
+    Returns true if the user is registered, false otherwise
+
+    Args:
+        discord_username (str): the username of the discord member
+
+    Returns:
+        bool: True if the user is registered, false otherwise
+    """
+    result = 0
+    with get_cursor() as cursor:
+        cursor.execute(
+            "SELECT * FROM discord_users WHERE discord_username = %(discord_username)s",
+            {"discord_username": discord_username},
+        )
+        result = cursor.fetchall()
+    return len(result) > 0
