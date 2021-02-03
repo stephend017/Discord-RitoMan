@@ -1,4 +1,4 @@
-requests==2.25.0
+requests==2.25.1
 fastcore
 psycopg2
 schedule
