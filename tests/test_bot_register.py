@@ -1,38 +1,12 @@
-from discord.errors import NotFound
 import pytest
 
+from tests.mock.discord_mocks import mock_discord_bot, mock_discord_user
+from tests.helpers import discord_ctx_mock
+
 from unittest import mock
-from unittest.mock import AsyncMock, MagicMock
-from discord.user import User
 
 import discord_ritoman.bot
 from discord_ritoman.bot import register
-
-
-def discord_ctx_mock() -> MagicMock:
-    """
-    Returns the ctx object passed to each bot command funciton
-
-    Returns:
-        MagicMock: A magic mock that mocks the context object
-    """
-    ctx = MagicMock()
-    ctx.send = AsyncMock()
-    return ctx
-
-
-def discord_bot_mock(mock_bot, fetch_user_result=[NotFound]):
-    """
-    Adds relevant fields to make the mock passed in
-    behave as a bot
-
-    Args:
-        mock_bot: the mock to configure
-        fetch_user_result: the response to return from the
-            fetch user function
-    """
-    mock_bot.fetch_user = AsyncMock()
-    mock_bot.fetch_user.side_effect = fetch_user_result
 
 
 @pytest.mark.asyncio
@@ -46,36 +20,27 @@ async def test_register(
     """
     tests that the register function works correctly
     """
-    user_id = 383854815186518016
-    expected_user = User(
-        state=None,
-        data={
-            "username": "sevo",
-            "discriminator": 4375,
-            "avatar": "",
-            "id": user_id,
-        },
-    )
+    expected_user = mock_discord_user()
     summoner_name = "sevo17"
-    discord_user = f"<@!{user_id}>"
+    discord_user = f"<@!{expected_user.id}>"
     riot_puuid = "APUUID"
 
     ctx = discord_ctx_mock()
-    discord_bot_mock(mock_bot, [expected_user])
+    mock_discord_bot(mock_bot, [expected_user])
     mock_get_puuid.return_value = riot_puuid
     mock_add_new_lol_user.return_value = True
 
     await register(ctx, discord_user, summoner_name)
 
-    mock_bot.fetch_user.assert_called_once_with(user_id)
+    mock_bot.fetch_user.assert_called_once_with(expected_user.id)
     mock_get_puuid.assert_called_once_with(summoner_name)
     mock_add_new_discord_user.assert_called_once_with(
-        expected_user.name, riot_puuid, user_id
+        expected_user.name, riot_puuid, expected_user.id
     )
     mock_add_new_lol_user.assert_called_once_with(expected_user.name)
 
     ctx.send.assert_called_once_with(
-        f"successfully added <@!{user_id}> as the summoner {summoner_name} to the DB"
+        f"successfully added <@!{expected_user.id}> as the summoner {summoner_name} to the DB"
     )
 
 
@@ -86,13 +51,12 @@ async def test_register_fetch_user_fails(mock_bot):
     Tests that when `fetch_user` fails the correct output
     is sent to the server
     """
-    user_id = 383854815186518016
+    user = mock_discord_user()
     summoner_name = "sevo17"
-    discord_user = f"<@!{user_id}>"
+    discord_user = f"<@!{user.id}>"
 
     ctx = discord_ctx_mock()
-
-    discord_bot_mock(mock_bot)
+    mock_discord_bot(mock_bot)
 
     await register(ctx, discord_user, summoner_name)
 
@@ -106,26 +70,16 @@ async def test_register_get_puuid_fails(mock_bot):
     Tests that when `get_puuid` fails the correct output
     is sent to the server
     """
-    user_id = 383854815186518016
+    expected_user = mock_discord_user()
     summoner_name = "sevo17"
-    discord_user = f"<@!{user_id}>"
-    expected_user = User(
-        state=None,
-        data={
-            "username": "sevo",
-            "discriminator": 4375,
-            "avatar": "",
-            "id": user_id,
-        },
-    )
+    discord_user = f"<@!{expected_user.id}>"
 
     ctx = discord_ctx_mock()
-
-    discord_bot_mock(mock_bot, [expected_user])
+    mock_discord_bot(mock_bot, [expected_user])
 
     await register(ctx, discord_user, summoner_name)
 
-    mock_bot.fetch_user.assert_called_once_with(user_id)
+    mock_bot.fetch_user.assert_called_once_with(expected_user.id)
     ctx.send.assert_called_once_with(
         f"Unable to find summoner {summoner_name}. Are you sure this summoner exists?"
     )
@@ -139,26 +93,16 @@ async def test_register_add_new_discord_user_fails(mock_bot, mock_get_puuid):
     Tests that when `add_new_discord_user_fails` fails the correct output
     is sent to the server
     """
-    user_id = 383854815186518016
+    expected_user = mock_discord_user()
     summoner_name = "sevo17"
-    discord_user = f"<@!{user_id}>"
-    expected_user = User(
-        state=None,
-        data={
-            "username": "sevo",
-            "discriminator": 4375,
-            "avatar": "",
-            "id": user_id,
-        },
-    )
+    discord_user = f"<@!{expected_user.id}>"
 
     ctx = discord_ctx_mock()
-
-    discord_bot_mock(mock_bot, [expected_user])
+    mock_discord_bot(mock_bot, [expected_user])
 
     await register(ctx, discord_user, summoner_name)
 
-    mock_bot.fetch_user.assert_called_once_with(user_id)
+    mock_bot.fetch_user.assert_called_once_with(expected_user.id)
     mock_get_puuid.assert_called_once_with(summoner_name)
 
     ctx.send.assert_called_once_with("Failed to update discord_users db")
@@ -175,30 +119,21 @@ async def test_register_add_new_lol_user_fails(
     Tests that when `add_new_lol_user_fails` fails the correct output
     is sent to the server
     """
-    user_id = 383854815186518016
+    expected_user = mock_discord_user()
     summoner_name = "sevo17"
-    discord_user = f"<@!{user_id}>"
-    expected_user = User(
-        state=None,
-        data={
-            "username": "sevo",
-            "discriminator": 4375,
-            "avatar": "",
-            "id": user_id,
-        },
-    )
+    discord_user = f"<@!{expected_user.id}>"
     riot_puuid = "APUUID"
 
     ctx = discord_ctx_mock()
-    discord_bot_mock(mock_bot, [expected_user])
+    mock_discord_bot(mock_bot, [expected_user])
     mock_get_puuid.return_value = riot_puuid
 
     await register(ctx, discord_user, summoner_name)
 
-    mock_bot.fetch_user.assert_called_once_with(user_id)
+    mock_bot.fetch_user.assert_called_once_with(expected_user.id)
     mock_get_puuid.assert_called_once_with(summoner_name)
     mock_add_new_discord_user.assert_called_once_with(
-        expected_user.name, riot_puuid, user_id
+        expected_user.name, riot_puuid, expected_user.id
     )
 
     ctx.send.assert_called_once_with("Failed to update lol_data db")
