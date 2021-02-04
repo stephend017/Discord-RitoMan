@@ -17,7 +17,9 @@ class LoLUser(Base):
     __tablename__ = "lol_user"
     discord_id = Column(BigInteger, primary_key=True)
     winrate = Column(
-        BigInteger, ForeignKey("lol_user_winrate.discord_id"), nullable=True
+        BigInteger,
+        ForeignKey("lol_user_winrate.discord_id", ondelete="CASCADE"),
+        nullable=True,
     )
     riot_puuid = Column(VARCHAR(255))
     last_updated = Column(BigInteger)
@@ -38,6 +40,11 @@ class LoLUserWinrate(Base):
     discord_id = Column(BigInteger, primary_key=True)
     wins = Column(Integer)
     losses = Column(Integer)
+
+    def __init__(self, discord_id):
+        self.discord_id = discord_id
+        self.wins = 0
+        self.losses = 0
 
 
 class LoLTextGroup(Base):

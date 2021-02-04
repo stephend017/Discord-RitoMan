@@ -18,7 +18,7 @@ def send_discord_message(message: str):
     Args:
         message (str): the literal text to send.
     """
-    webhook = os.getenv("DISCORD_BOT", None,)
+    webhook = os.getenv("DISCORD_BOT", None)
     if webhook is None:
         logger.critical("Unable to read webhook from environment variable")
         return
