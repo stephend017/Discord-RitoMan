@@ -1,4 +1,6 @@
 import datetime
+import uuid
+
 from discord_ritoman.utils import unix_time_millis
 from sqlalchemy import Column
 from sqlalchemy.sql.schema import ForeignKey
@@ -55,10 +57,15 @@ class LoLTextGroup(Base):
 
     __tablename__ = "lol_text_group"
     uuid = Column(
-        VARCHAR(32), primary_key=True
+        String(32), primary_key=True
     )  # UUID4 returns 32 character hex string
-    name = Column(VARCHAR(255))
+    name = Column(String(255), unique=True)
     usage = Column(String)
+
+    def __init__(self, name, usage):
+        self.uuid = uuid.uuid4().hex
+        self.name = name
+        self.usage = usage
 
 
 class LoLText(Base):
@@ -68,7 +75,12 @@ class LoLText(Base):
 
     __tablename__ = "lol_text"
     uuid = Column(
-        VARCHAR(32), primary_key=True
+        String(32), primary_key=True
     )  # UUID4 returns 32 character hex string
-    group = Column(VARCHAR(32), ForeignKey("lol_text_group.uuid"))
+    group = Column(String(32), ForeignKey("lol_text_group.uuid"))
     text = Column(String)
+
+    def __init__(self, group, text):
+        self.uuid = uuid.uuid4().hex
+        self.group = group
+        self.text = text

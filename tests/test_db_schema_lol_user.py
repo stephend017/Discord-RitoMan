@@ -18,6 +18,11 @@ def test_create_lol_user(discord_id, riot_puuid):
     """
     Tests that creating a new LoLUser works correctly
     """
+    queried_users = session.query(LoLUser).all()
+    if len(queried_users) > 0:
+        session.query(LoLUser).delete()
+        session.commit()
+
     assert len(session.query(LoLUser).all()) == 0
 
     user = LoLUser(discord_id, riot_puuid)
