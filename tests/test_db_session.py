@@ -28,4 +28,4 @@ def test_all_schemas_created():
         if schema != "public":
             # this is not the schema we defined (other db stuff)
             continue
-        assert len(inspector.get_table_names(schema=schema)) == 4
+        assert len(inspector.get_table_names(schema=schema)) == 3

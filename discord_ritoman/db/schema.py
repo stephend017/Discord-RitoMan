@@ -4,7 +4,13 @@ import uuid
 from discord_ritoman.utils import unix_time_millis
 from sqlalchemy import Column
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import BigInteger, Integer, String, VARCHAR
+from sqlalchemy.sql.sqltypes import (
+    BigInteger,
+    Boolean,
+    Integer,
+    String,
+    VARCHAR,
+)
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -18,33 +24,17 @@ class LoLUser(Base):
 
     __tablename__ = "lol_user"
     discord_id = Column(BigInteger, primary_key=True)
-    winrate = Column(
-        BigInteger,
-        ForeignKey("lol_user_winrate.discord_id", ondelete="CASCADE"),
-        nullable=True,
-    )
     riot_puuid = Column(VARCHAR(255))
     last_updated = Column(BigInteger)
-
-    def __init__(self, discord_id, riot_puuid):
-        self.discord_id = discord_id
-        self.riot_puuid = riot_puuid
-        self.last_updated = unix_time_millis(datetime.datetime.now())
-
-
-class LoLUserWinrate(Base):
-    """
-    Definition of discord user who wants this bot
-    to record winrate
-    """
-
-    __tablename__ = "lol_user_winrate"
-    discord_id = Column(BigInteger, primary_key=True)
+    winrate = Column(Boolean)
     wins = Column(Integer)
     losses = Column(Integer)
 
-    def __init__(self, discord_id):
+    def __init__(self, discord_id, riot_puuid, winrate=False):
         self.discord_id = discord_id
+        self.riot_puuid = riot_puuid
+        self.last_updated = unix_time_millis(datetime.datetime.now())
+        self.winrate = winrate
         self.wins = 0
         self.losses = 0
 
