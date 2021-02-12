@@ -9,6 +9,7 @@ from discord_ritoman.db.accessors import (
     get_lol_text_by_group,
     get_lol_user_by_discord_id,
     get_lol_users_with_winrate_enabled,
+    reset_all_lol_user_winrate,
     set_lol_user_winrate,
     update_lol_user_last_updated,
     update_lol_user_winrate,
@@ -39,9 +40,9 @@ def mock_text(group1: LoLTextGroup, group2: LoLTextGroup) -> List[LoLText]:
     Returns all mock text
     """
     return [
-        LoLText(group1.uuid, "testing 1"),
-        LoLText(group1.uuid, "2 testing"),
-        LoLText(group2.uuid, "another one"),
+        LoLText("prefix", "testing 1"),
+        LoLText("prefix", "2 testing"),
+        LoLText("suffix", "another one"),
     ]
 
 
@@ -49,6 +50,12 @@ def setup_module(module):
     """ setup any state specific to the execution of the given module."""
     # clean db before insertions
     session.query(LoLUser).delete()
+    session.commit()
+
+    session.query(LoLText).delete()
+    session.commit()
+
+    session.query(LoLTextGroup).delete()
     session.commit()
 
     # populate db with mock users to test with
@@ -114,7 +121,7 @@ def test_get_lol_text_by_group():
     for expected in expected_texts:
         found = False
         for text in texts:
-            if expected.text == text.text:
+            if expected.content == text.content:
                 found = True
                 break
         assert found
@@ -138,15 +145,32 @@ def test_update_lol_user_winrate():
     assert user.losses == 0
 
     update_lol_user_winrate(user, GameResult.WIN)
-    assert user.wins.compare(LoLUser.wins + 1)
+    user = (
+        session.query(LoLUser)
+        .filter(LoLUser.discord_id == user.discord_id)
+        .one()
+    )
+    assert user.wins == 1
 
     update_lol_user_winrate(user, GameResult.LOSS)
-    assert user.losses.compare(LoLUser.losses + 1)
+    # assert user.losses.compare(LoLUser.losses + 1)
+    user = (
+        session.query(LoLUser)
+        .filter(LoLUser.discord_id == user.discord_id)
+        .one()
+    )
+    assert user.losses == 1
 
     update_lol_user_winrate(user, GameResult.NONE)
-    assert user.wins.compare(LoLUser.wins + 1) and user.losses.compare(
-        LoLUser.losses + 1
+    # assert user.wins.compare(LoLUser.wins + 1) and user.losses.compare(
+    #     LoLUser.losses + 1
+    # )
+    user = (
+        session.query(LoLUser)
+        .filter(LoLUser.discord_id == user.discord_id)
+        .one()
     )
+    assert user.wins == 1 and user.losses == 1
 
 
 def test_set_lol_user_winrate():
@@ -195,3 +219,17 @@ def test_get_lol_user_by_discord_id():
     """
     assert get_lol_user_by_discord_id(1)
     assert get_lol_user_by_discord_id(6) is None
+
+
+def test_reset_all_lol_user_winrate():
+    """
+    Tests that reset all lol user winrate works
+    """
+    user = mock_users()[2]
+    update_lol_user_winrate(user, GameResult.LOSS)
+    update_lol_user_winrate(user, GameResult.WIN)
+
+    reset_all_lol_user_winrate()
+
+    assert user.wins == 0
+    assert user.losses == 0

@@ -14,6 +14,31 @@ def lol_text_group_usage() -> str:
     return "text to be displayed at the end of a rich message"
 
 
+def setup_module(module):
+    """ setup any state specific to the execution of the given module."""
+    # remove mock text
+    session.query(LoLText).delete()
+    session.commit()
+
+    # remove mock text_groups
+    session.query(LoLTextGroup).delete()
+    session.commit()
+
+
+def teardown_module(module):
+    """teardown any state that was previously setup with a setup_module
+    method.
+    """
+
+    # remove mock text
+    session.query(LoLText).delete()
+    session.commit()
+
+    # remove mock text_groups
+    session.query(LoLTextGroup).delete()
+    session.commit()
+
+
 def test_create_lol_text_group(lol_text_group_name, lol_text_group_usage):
     """
     Tests that a lol text group can be created successfully
@@ -33,13 +58,7 @@ def test_create_lol_text(lol_text_group_name):
     """
     assert len(session.query(LoLText).all()) == 0
 
-    text_group_uuid = (
-        session.query(LoLTextGroup)
-        .filter(LoLTextGroup.name == lol_text_group_name)
-        .all()[0]
-        .uuid
-    )
-    text = LoLText(text_group_uuid, "ending.")
+    text = LoLText(lol_text_group_name, "ending.")
     session.add(text)
     session.commit()
 

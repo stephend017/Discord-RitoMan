@@ -1,20 +1,30 @@
+from discord_ritoman.db.schema import LoLText, LoLUser
+from discord_ritoman.db.accessors import (
+    get_all_lol_users,
+    get_lol_text_by_group,
+    get_lol_users_with_winrate_enabled,
+    reset_all_lol_user_winrate,
+    update_lol_user_last_updated,
+    update_lol_user_winrate,
+)
 from discord_ritoman.utils import create_logger
 from discord_ritoman.models import GameResult
 from discord_ritoman.discord_api import send_discord_message
 from typing import Any, Dict, List
 from discord_ritoman.lol_match_metadata import LoLMatchMetadata
-from discord_ritoman.db_api import (
-    add_new_lol_game,
-    does_user_record_lol_winrate,
-    get_all_discord_users,
-    get_all_lol_users_winrate,
-    get_all_prefixes,
-    get_last_recorded_time,
-    reset_all_lol_user_winrates,
-    set_last_recorded_time,
-    get_all_stat_prefixes_01,
-    get_all_suffixes,
-)
+
+# from discord_ritoman.db_api import (
+# add_new_lol_game,
+# does_user_record_lol_winrate,
+# get_all_discord_users,
+# get_all_lol_users_winrate,
+# get_all_prefixes,
+# get_last_recorded_time,
+# reset_all_lol_user_winrates,
+# set_last_recorded_time,
+# get_all_stat_prefixes_01,
+# get_all_suffixes,
+# )
 from discord_ritoman.lol_api import (
     get_account_id,
     get_matches,
@@ -24,41 +34,16 @@ from discord_ritoman.lol_api import (
 from discord_ritoman.lol_match_data import LoLMatchData
 import random
 
-# import logging
-# from logging.handlers import RotatingFileHandler
-
-# log_formatter = logging.Formatter(
-#     "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s"
-# )
-
-# logFile = "./api.log"
-
-# my_handler = RotatingFileHandler(
-#     logFile,
-#     mode="a",
-#     maxBytes=5 * 1024 * 1024,
-#     backupCount=2,
-#     encoding=None,
-#     delay=0,
-# )
-# my_handler.setFormatter(log_formatter)
-# my_handler.setLevel(logging.INFO)
-
-# logger = logging.getLogger("api")
-# logger.setLevel(logging.INFO)
-
-# logger.addHandler(my_handler)
-
 logger = create_logger(__file__)
 
 
 def handle_lol_loss(
     data: LoLMatchData,
-    user_info,
+    user: LoLUser,
     account_id,
-    prefixes,
-    stat_prefixes_01,
-    suffixes,
+    prefixes: List[LoLText],
+    stat_prefixes_01: List[LoLText],
+    suffixes: List[LoLText],
     champion,
 ):
     """"""
@@ -82,7 +67,8 @@ def handle_lol_loss(
             max_solo_deaths_to_champ >= total_deaths / 2
             and data.has_max_team_deaths()
         ):
-            message = f"well well well, dinner has been served because <@{user_info[2]}> fed the absolute shit out of {data.get_champion_name_from_pariticpant_id(champ)} giving them "
+            # message = f"well well well, dinner has been served because <@{user_info[2]}> fed the absolute shit out of {data.get_champion_name_from_pariticpant_id(champ)} giving them "
+            message = f"well well well, dinner has been served because <@{user.discord_id}> fed the absolute shit out of {data.get_champion_name_from_pariticpant_id(champ)} giving them "
 
             if max_solo_deaths_to_champ == solo_deaths:
                 message += (
@@ -99,11 +85,13 @@ def handle_lol_loss(
             )
             suffix_index: int = random.randint(0, len(suffixes) - 1)
             send_discord_message(
-                f"{prefixes[prefix_index][0]} <@{user_info[2]}> {stat_prefixes_01[stat_prefix_01_index][0]} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index][0]}"
+                # f"{prefixes[prefix_index][0]} <@{user_info[2]}> {stat_prefixes_01[stat_prefix_01_index][0]} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index][0]}"
+                f"{prefixes[prefix_index].content} <@{user.discord_id}> {stat_prefixes_01[stat_prefix_01_index].content} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index].content}"
             )
         else:
             send_discord_message(
-                f"<@{user_info[2]}> got fucking trolled in their last game of league of legends. unlucky m8"
+                # f"<@{user_info[2]}> got fucking trolled in their last game of league of legends. unlucky m8"
+                f"<@{user.discord_id}> got fucking trolled in their last game of league of legends. unlucky m8"
             )
     except Exception as error:
         logger.critical(error)
@@ -114,11 +102,11 @@ def handle_lol_loss(
 def handle_lol_match(
     match,
     account_id,
-    user_info,
+    user: LoLUser,
     timestamp,
-    prefixes,
-    stat_prefixes_01,
-    suffixes,
+    prefixes: List[LoLText],
+    stat_prefixes_01: List[LoLText],
+    suffixes: List[LoLText],
 ):
     """"""
     match_data: Dict[str, Any] = {}
@@ -145,23 +133,28 @@ def handle_lol_match(
     if not data.did_account_win(account_id):
         handle_lol_loss(
             data,
-            user_info,
+            user,
             account_id,
             prefixes,
             stat_prefixes_01,
             suffixes,
             champion,
         )
-        if does_user_record_lol_winrate(user_info[0]):
-            add_new_lol_game(user_info[0], GameResult.LOSS)
+        # if does_user_record_lol_winrate(user_info[0]):
+        #     add_new_lol_game(user_info[0], GameResult.LOSS)
+        if user.winrate:
+            update_lol_user_winrate(user, GameResult.LOSS)
     else:
-        if does_user_record_lol_winrate(user_info[0]):
-            add_new_lol_game(user_info[0], GameResult.WIN)
+        # if does_user_record_lol_winrate(user_info[0]):
+        #     add_new_lol_game(user_info[0], GameResult.WIN)
+        if user.winrate:
+            update_lol_user_winrate(user, GameResult.WIN)
 
     match_end = data.get_match_end()
     logger.info(f"{match_end} > {timestamp}")
     if match_end > timestamp:
-        set_last_recorded_time(user_info[0], data.get_match_end())
+        # set_last_recorded_time(user_info[0], data.get_match_end())
+        update_lol_user_last_updated(user, match_end)
 
 
 def run_lol():
@@ -170,23 +163,59 @@ def run_lol():
     to the discord server for every bad game
     """
     logger.info("Starting lol run")
-    users = get_all_discord_users()
-    prefixes = get_all_prefixes()
-    stat_prefixes_01 = get_all_stat_prefixes_01()
-    suffixes = get_all_suffixes()
+    # users = get_all_discord_users()
+    users: List[LoLUser] = get_all_lol_users()
+    # prefixes = get_all_prefixes()
+    prefixes: List[LoLText] = get_lol_text_by_group("p0")
+    # stat_prefixes_01 = get_all_stat_prefixes_01()
+    stat_prefixes_01: List[LoLText] = get_lol_text_by_group("sp0")
+    # suffixes = get_all_suffixes()
+    suffixes: List[LoLText] = get_lol_text_by_group("s0")
 
-    logger.info(",".join(userinfo[0] for userinfo in users))
+    # logger.info(",".join(userinfo[0] for userinfo in users))
 
-    for user_info in users:
-        logger.info(f"processing user {user_info[0]}")
-        timestamp = get_last_recorded_time(user_info[0])
+    # the old way
+    # for user_info in users:
+    #     logger.info(f"processing user {user_info[0]}")
+    #     timestamp = get_last_recorded_time(user_info[0])
 
+    #     account_id: str = ""
+    #     matches: List[LoLMatchMetadata] = []
+
+    #     try:
+    #         account_id = get_account_id(user_info[1])
+
+    #     except Exception:
+    #         logger.error(
+    #             "There was an error retrieving account data, skipping this iteration"
+    #         )
+    #         continue
+
+    #     try:
+    #         matches = get_matches(account_id, timestamp)
+    #     except Exception:
+    #         logger.error(
+    #             f"There was an error retrieving matches for account [{user_info[0]}], skipping this iteration"
+    #         )
+    #         continue
+
+    #     for match in matches:
+    #         handle_lol_match(
+    #             match,
+    #             account_id,
+    #             user_info,
+    #             timestamp,
+    #             prefixes,
+    #             stat_prefixes_01,
+    #             suffixes,
+    #         )
+    for user in users:
+        timestamp = user.last_updated
         account_id: str = ""
         matches: List[LoLMatchMetadata] = []
 
         try:
-            account_id = get_account_id(user_info[1])
-
+            account_id = get_account_id(user.riot_puuid)
         except Exception:
             logger.error(
                 "There was an error retrieving account data, skipping this iteration"
@@ -197,7 +226,7 @@ def run_lol():
             matches = get_matches(account_id, timestamp)
         except Exception:
             logger.error(
-                f"There was an error retrieving matches for account [{user_info[0]}], skipping this iteration"
+                f"There was an error retrieving matches for account [{user.discord_id}], skipping this iteration"
             )
             continue
 
@@ -205,7 +234,7 @@ def run_lol():
             handle_lol_match(
                 match,
                 account_id,
-                user_info,
+                user,
                 timestamp,
                 prefixes,
                 stat_prefixes_01,
@@ -215,29 +244,42 @@ def run_lol():
 
 def dump_lol_winrate():
     """
-    sends a discord message at 12 AM EST with the winrate
+    sends a discord message at 7 PM EST with the winrate
     for everyone who played that day
     """
 
     logger.info("starting winrate dump")
-    users = get_all_lol_users_winrate()
+    # users = get_all_lol_users_winrate()
+    users: List[LoLUser] = get_lol_users_with_winrate_enabled()
 
     send_discord_message(
         "good evening degens, I'm here to glorify those who carried and shame those who inted"
     )
 
     for user in users:
-        discord_id = user[0]
-        wins = user[1]
-        losses = user[2]
-        if wins > losses:
+        # discord_id = user[0]
+        # wins = user[1]
+        # losses = user[2]
+
+        if user.wins == 0 and user.losses == 0:
+            # skip users that dont play
+            continue
+
+        if user.wins > user.losses:
             send_discord_message(
-                f"<@{discord_id}> carried today with {wins} wins and {losses} losses, good job summoner"
+                f"<@{user.discord_id}> carried today with {user.wins} wins and {user.losses} losses, good job summoner"
             )
-        else:
+
+        if user.wins == user.losses:
             send_discord_message(
-                f"<@{discord_id}> inted today with {wins} wins and {losses} losses. you fucked up, but im sure it was your team who trolled and not your fault"
+                f"<@{user.discord_id}> fucking wasted their time today with {user.wins} wins and losses"
+            )
+
+        if user.wins < user.losses:  # only those who played
+            send_discord_message(
+                f"<@{user.discord_id}> inted today with {user.wins} wins and {user.losses} losses. you fucked up, but im sure it was your team who trolled and not your fault"
             )
 
     logger.info("wiping todays stats")
-    reset_all_lol_user_winrates()
+    # reset_all_lol_user_winrates()
+    reset_all_lol_user_winrate()

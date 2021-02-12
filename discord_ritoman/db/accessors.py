@@ -30,17 +30,17 @@ def get_lol_text_by_group(group_name: str) -> List[LoLText]:
     Returns:
         List[LoLText]: All the text that belongs to the given group
     """
-    query_result = (
-        session.query(LoLTextGroup)
-        .filter(LoLTextGroup.name == group_name)
-        .all()
-    )
-    if len(query_result) != 1:
-        raise Exception(f"[ERROR]: LoLTextGroup ({group_name}) doesn't exist")
+    # query_result = (
+    #     session.query(LoLTextGroup)
+    #     .filter(LoLTextGroup.name == group_name)
+    #     .all()
+    # )
+    # if len(query_result) != 1:
+    #     raise Exception(f"[ERROR]: LoLTextGroup ({group_name}) doesn't exist")
 
-    group: LoLTextGroup = query_result[0]
+    # group: LoLTextGroup = query_result[0]
 
-    return session.query(LoLText).filter(LoLText.group == group.uuid).all()
+    return session.query(LoLText).filter(LoLText.group == group_name).all()
 
 
 def update_lol_user_last_updated(user: LoLUser, timestamp: int):
@@ -67,11 +67,17 @@ def update_lol_user_winrate(user: LoLUser, game_result: GameResult):
         game_result (GameResult): the result of the game
     """
     if game_result == GameResult.WIN:
-        user.wins = LoLUser.wins + 1
+        # user.wins = LoLUser.wins + 1
+        session.query(LoLUser).filter(
+            LoLUser.discord_id == user.discord_id
+        ).update({"wins": user.wins + 1})
         session.commit()
 
     if game_result == GameResult.LOSS:
-        user.losses = LoLUser.losses + 1
+        # user.losses = LoLUser.losses + 1
+        session.query(LoLUser).filter(
+            LoLUser.discord_id == user.discord_id
+        ).update({"losses": user.losses + 1})
         session.commit()
 
 
@@ -129,3 +135,11 @@ def get_lol_user_by_discord_id(discord_id: int) -> LoLUser:
         )
     except NoResultFound:
         return None
+
+
+def reset_all_lol_user_winrate():
+    """
+    Resets the winrate of all LoLUsers to 0 - 0
+    """
+    session.query(LoLUser).update({"wins": 0, "losses": 0})
+    session.commit()

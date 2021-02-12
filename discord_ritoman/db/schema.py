@@ -4,13 +4,7 @@ import uuid
 from discord_ritoman.utils import unix_time_millis
 from sqlalchemy import Column
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import (
-    BigInteger,
-    Boolean,
-    Integer,
-    String,
-    VARCHAR,
-)
+from sqlalchemy.sql.sqltypes import BigInteger, Boolean, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -24,7 +18,7 @@ class LoLUser(Base):
 
     __tablename__ = "lol_user"
     discord_id = Column(BigInteger, primary_key=True)
-    riot_puuid = Column(VARCHAR(255))
+    riot_puuid = Column(String(255))
     last_updated = Column(BigInteger)
     winrate = Column(Boolean)
     wins = Column(Integer)
@@ -46,16 +40,18 @@ class LoLTextGroup(Base):
     """
 
     __tablename__ = "lol_text_group"
-    uuid = Column(
-        String(32), primary_key=True
-    )  # UUID4 returns 32 character hex string
-    name = Column(String(255), unique=True)
+    # uuid = Column(
+    #     String(32), primary_key=True
+    # )  # UUID4 returns 32 character hex string
+    name = Column(String(32), primary_key=True)
     usage = Column(String)
+    # identifier = Column(String(8), unique=True)
 
     def __init__(self, name, usage):
-        self.uuid = uuid.uuid4().hex
+        # self.uuid = uuid.uuid4().hex
         self.name = name
         self.usage = usage
+        # self.identifier = identifier
 
 
 class LoLText(Base):
@@ -67,10 +63,10 @@ class LoLText(Base):
     uuid = Column(
         String(32), primary_key=True
     )  # UUID4 returns 32 character hex string
-    group = Column(String(32), ForeignKey("lol_text_group.uuid"))
-    text = Column(String)
+    group = Column(String(32), ForeignKey("lol_text_group.name"))
+    content = Column(String)
 
-    def __init__(self, group, text):
+    def __init__(self, group, content):
         self.uuid = uuid.uuid4().hex
         self.group = group
-        self.text = text
+        self.content = content
