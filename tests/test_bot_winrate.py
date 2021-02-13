@@ -1,3 +1,6 @@
+from discord_ritoman.db.accessors import get_lol_user_by_discord_id
+from discord_ritoman.db.schema import LoLUser
+from discord_ritoman.db.session import session
 from discord.errors import NotFound
 import pytest
 
@@ -10,51 +13,86 @@ import discord_ritoman.bot
 from discord_ritoman.bot import winrate
 
 
+def lol_user_discord_id() -> int:
+    """
+    returns the discord id of the user
+    """
+    return 1234
+
+
+def create_user():
+    """
+    adds the user to the db
+    """
+    user = LoLUser(lol_user_discord_id(), "puuid", True)
+    session.add(user)
+    session.commit()
+
+
+def remove_all_users():
+    """
+    removes all the users from the db
+    """
+    session.query(LoLUser).delete()
+    session.commit()
+
+
+def setup_module(module):
+    """ setup any state specific to the execution of the given module."""
+    # clean db before insertions
+    remove_all_users()
+    create_user()
+
+
+def teardown_module(module):
+    """teardown any state that was previously setup with a setup_module
+    method.
+    """
+    remove_all_users()
+
+
 def winrate_test_helper(
-    opt_in=True,
-    opt_out=True,
     is_registered=True,
     does_record_winrate=True,
-    get_discord_lol_record=[2, 2],
+    wins=2,
+    losses=2,
     fetch_user_fail=False,
     option="--add",
 ):
     def decorator(func):
         @pytest.mark.asyncio
-        @mock.patch.object(discord_ritoman.bot, "get_discord_lol_record")
-        @mock.patch.object(discord_ritoman.bot, "does_user_record_lol_winrate")
-        @mock.patch.object(discord_ritoman.bot, "opt_out_record_lol_winrate")
-        @mock.patch.object(discord_ritoman.bot, "opt_in_record_lol_winrate")
-        @mock.patch.object(discord_ritoman.bot, "is_user_registered")
         @mock.patch.object(discord_ritoman.bot, "bot")
-        async def wrapper(
-            mock_bot,
-            mock_is_user_registered,
-            mock_opt_in_record_lol_winrate,
-            mock_opt_out_record_lol_winrate,
-            mock_does_user_record_lol_winrate,
-            mock_get_discord_lol_record,
-        ):
+        async def wrapper(mock_bot):
             ctx = discord_ctx_mock()
-            user = mock_discord_user()
+            user = None
+            discord_user = mock_discord_user(user_id=lol_user_discord_id())
 
-            mock_is_user_registered.return_value = is_registered
-            mock_opt_in_record_lol_winrate.return_value = opt_in
-            mock_opt_out_record_lol_winrate.return_value = opt_out
-            mock_does_user_record_lol_winrate.return_value = (
-                does_record_winrate
-            )
-            mock_get_discord_lol_record.return_value = get_discord_lol_record
+            remove_all_users()
+
+            if is_registered:
+                create_user()
+                user = get_lol_user_by_discord_id(lol_user_discord_id())
+                session.query(LoLUser).filter(
+                    LoLUser.discord_id == user.discord_id
+                ).update(
+                    {
+                        "winrate": does_record_winrate,
+                        "wins": wins,
+                        "losses": losses,
+                    }
+                )
+                user = get_lol_user_by_discord_id(lol_user_discord_id())
 
             mock_discord_bot(
-                mock_bot, [NotFound] if fetch_user_fail else [user]
+                mock_bot, [NotFound] if fetch_user_fail else [discord_user]
             )
 
+            discord_id = user.discord_id if user else 0
             # call actual function with everything mocked above
-            await winrate(ctx, option, f"<@!{user.id}>")
+            await winrate(ctx, option, f"<@!{discord_id}>")
 
             # validate function
-            func(ctx, user)
+            func(ctx, user, discord_user.name)
 
         return wrapper
 
@@ -62,33 +100,33 @@ def winrate_test_helper(
 
 
 @winrate_test_helper(does_record_winrate=False)
-def test_winrate_add(ctx, user):
+def test_winrate_add(ctx, user, username):
     """
     Tests that the winrate --add command works correctly
     """
-    ctx.send.assert_called_once_with(f"successfully added {user.name}")
+    ctx.send.assert_called_once_with(f"successfully added {username}")
 
 
 @winrate_test_helper(option="--get")
-def test_winrate_get(ctx, user):
+def test_winrate_get(ctx, user, username):
     """
     Tests that the winrate --get command works correctly
     """
     ctx.send.assert_called_once_with(
-        f"the winrate for <@!{user.id}> today is 2 wins and 2 losses"
+        f"the winrate for <@!{user.discord_id}> today is 2 wins and 2 losses"
     )
 
 
 @winrate_test_helper(option="--remove")
-def test_winrate_remove(ctx, user):
+def test_winrate_remove(ctx, user, username):
     """
     Tests that the winrate --remove command works correctly
     """
-    ctx.send.assert_called_once_with(f"successfully removed {user.name}")
+    ctx.send.assert_called_once_with(f"successfully removed {username}")
 
 
 @winrate_test_helper(option="--invalid")
-def test_winrate_invalid_option(ctx, user):
+def test_winrate_invalid_option(ctx, user, username):
     """
     Tests that the winrate --remove command works correctly
     """
@@ -96,58 +134,26 @@ def test_winrate_invalid_option(ctx, user):
 
 
 @winrate_test_helper(fetch_user_fail=True)
-def test_winrate_fetch_user_fails(ctx, user):
+def test_winrate_fetch_user_fails(ctx, user, username):
     """
     Tests that the winrate command fails when `fetch_user` fails
     """
-    ctx.send.assert_called_once_with("Failed to fetch user discord ID")
+    ctx.send.assert_called_once_with("<:PepoG:773739956958658560>")
 
 
 @winrate_test_helper(is_registered=False)
-def test_winrate_username_not_registered(ctx, user):
+def test_winrate_username_not_registered(ctx, user, username):
     """
     Tests that the winrate command fails when the username
     passed to the command is not registered
     """
-    ctx.send.assert_called_once_with(
-        f"{user.name} is not registered, please run the `register` command first"
-    )
+    ctx.send.assert_called_once_with("<:PepoG:773739956958658560>")
 
 
 @winrate_test_helper()
-def test_winrate_add_existing_user(ctx, user):
+def test_winrate_add_existing_user(ctx, user, username):
     """
     Tests that the winrate command fails when the username
     passed to the command is already added to the winrate table
     """
     ctx.send.assert_called_once_with("<:PepoG:773739956958658560>")
-
-
-@winrate_test_helper(does_record_winrate=False, opt_in=False)
-def test_winrate_add_opt_in_fails(ctx, user):
-    """
-    Tests that the winrate command fails when the opt in
-    db query fails
-    """
-    ctx.send.assert_called_once_with(
-        "<@!383854815186518016> `opt_in_record_lol_winrate` failed and its probably your fault."
-    )
-
-
-@winrate_test_helper(option="--remove", opt_out=False)
-def test_winrate_remove_opt_out_fails(ctx, user):
-    """
-    Tests that the winrate command fails when the opt out
-    db query fails
-    """
-    ctx.send.assert_called_once_with(
-        "Unfortunately we can't remove you from this service at this time. A report has been filed and your ticker number is `undefined`. Thank you for your patience as we solve this problem."
-    )
-
-
-@winrate_test_helper(get_discord_lol_record=[], option="--get")
-def test_winrate_get_lol_record_fails(ctx, user):
-    """
-    Tests that when get_lol_record fails the correct output is produced
-    """
-    ctx.send.assert_called_once_with(f"Failed to get winrate for {user.name}")

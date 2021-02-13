@@ -1,19 +1,15 @@
+from discord_ritoman.db.schema import LoLUser
+from discord_ritoman.db.accessors import (
+    create_new_lol_user,
+    get_lol_user_by_discord_id,
+    set_lol_user_winrate,
+)
 from discord_ritoman.lol_api import get_puuid
 from discord.ext import commands
 import os
 
-from discord_ritoman.db_api import (
-    add_new_discord_user,
-    add_new_lol_user,
-    does_user_record_lol_winrate,
-    get_discord_lol_record,
-    is_user_registered,
-    opt_in_record_lol_winrate,
-    opt_out_record_lol_winrate,
-)
 from discord_ritoman.utils import create_logger
 
-from discord.user import User
 
 bot = commands.Bot(command_prefix="<@!779328785043554334> ")
 
@@ -45,16 +41,6 @@ async def register(ctx, discord_user, summoner_name):
         by quotes. example "Fwee ba Jee Ba"
     """
     user_id = int(discord_user[3:-1])
-    user: User = None
-
-    try:
-        user = await bot.fetch_user(user_id)
-    except Exception:
-        logger.error("Failed to fetch user discord ID")
-        await ctx.send("Failed to fetch user discord ID")
-        return
-
-    username = user.name
     riot_puuid = ""
 
     try:
@@ -68,22 +54,14 @@ async def register(ctx, discord_user, summoner_name):
         )
         return
 
-    if not add_new_discord_user(username, riot_puuid, user_id):
-        logger.critical("Failed to update discord_users db")
-        await ctx.send("Failed to update discord_users db")
-        return
-
-    if not add_new_lol_user(username):
-        logger.critical("Failed to update lol_data db")
-        await ctx.send("Failed to update lol_data db")
-        return
+    create_new_lol_user(user_id, riot_puuid)
 
     await ctx.send(
         f"successfully added <@!{user_id}> as the summoner {summoner_name} to the DB"
     )
 
 
-async def winrate_add_helper(ctx, username):
+async def winrate_add_helper(ctx, user: LoLUser):
     """
     winrate add helper function (to reduce single function complexity)
 
@@ -91,20 +69,22 @@ async def winrate_add_helper(ctx, username):
         ctx: the discord context object sent to the command function
         username: the username of the discord user
     """
-    if does_user_record_lol_winrate(username):
+    if user.winrate:
         await ctx.send("<:PepoG:773739956958658560>")
         return
 
-    if not opt_in_record_lol_winrate(username):
-        await ctx.send(
-            "<@!383854815186518016> `opt_in_record_lol_winrate` failed and its probably your fault."
-        )
+    username: str = ""
+    try:
+        username = (await bot.fetch_user(user.discord_id)).name
+    except Exception:
+        await ctx.send("<:PepoG:773739956958658560>")
         return
 
+    set_lol_user_winrate(user, True)
     await ctx.send(f"successfully added {username}")
 
 
-async def winrate_remove_helper(ctx, username):
+async def winrate_remove_helper(ctx, user: LoLUser):
     """
     winrate helper function (to reduce single function complexity)
 
@@ -112,20 +92,23 @@ async def winrate_remove_helper(ctx, username):
         ctx: the discord context object sent to the command function
         username: the username of the discord user
     """
-    if not does_user_record_lol_winrate(username):
+    if not user.winrate:
         await ctx.send("<:PepoG:773739956958658560>")
         return
-    if not opt_out_record_lol_winrate(username):
-        await ctx.send(
-            "Unfortunately we can't remove you from this service at this time. A report has been filed and your ticker number is `undefined`. Thank you for your patience as we solve this problem."
-        )
+
+    username: str = ""
+    try:
+        username = (await bot.fetch_user(user.discord_id)).name
+    except Exception:
+        await ctx.send("<:PepoG:773739956958658560>")
         return
 
+    set_lol_user_winrate(user, False)
+
     await ctx.send(f"successfully removed {username}")
-    return
 
 
-async def winrate_get_helper(ctx, username, user_id):
+async def winrate_get_helper(ctx, user: LoLUser):
     """
     winrate helper function (to reduce single function complexity)
 
@@ -134,18 +117,13 @@ async def winrate_get_helper(ctx, username, user_id):
         username: the username of the discord user
         user_id: the discord id of the discord user
     """
-    if not does_user_record_lol_winrate(username):
+    if not user.winrate:
         await ctx.send("<:PepoG:773739956958658560>")
         return
 
-    record = get_discord_lol_record(username)
-    if len(record) == 0:
-        await ctx.send(f"Failed to get winrate for {username}")
-        return
     await ctx.send(
-        f"the winrate for <@!{user_id}> today is {record[0]} wins and {record[1]} losses"
+        f"the winrate for <@!{user.discord_id}> today is {user.wins} wins and {user.losses} losses"
     )
-    return
 
 
 @bot.command()
@@ -157,30 +135,19 @@ async def winrate(ctx, option, discord_user):
         option: What specific subcommand to run (--add, --remove, --get)
         discord_user: should be a server member in the form of @username
     """
-    user_id = discord_user[3:-1]
-    user: User = None
+    user_id = int(discord_user[3:-1])
+    user = get_lol_user_by_discord_id(user_id)
 
-    try:
-        user = await bot.fetch_user(int(user_id))
-    except Exception:
-        logger.error("Failed to fetch user discord ID")
-        await ctx.send("Failed to fetch user discord ID")
-        return
-
-    username = user.name
-
-    if not is_user_registered(username):
-        await ctx.send(
-            f"{username} is not registered, please run the `register` command first"
-        )
+    if user is None:
+        await ctx.send("<:PepoG:773739956958658560>")
         return
 
     if option == "--add":
-        return await winrate_add_helper(ctx, username)
+        return await winrate_add_helper(ctx, user)
     elif option == "--remove":
-        return await winrate_remove_helper(ctx, username)
+        return await winrate_remove_helper(ctx, user)
     elif option == "--get":
-        return await winrate_get_helper(ctx, username, user_id)
+        return await winrate_get_helper(ctx, user)
 
     await ctx.send("<:PepoG:773739956958658560>")
 

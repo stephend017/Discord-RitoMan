@@ -30,16 +30,6 @@ def get_lol_text_by_group(group_name: str) -> List[LoLText]:
     Returns:
         List[LoLText]: All the text that belongs to the given group
     """
-    # query_result = (
-    #     session.query(LoLTextGroup)
-    #     .filter(LoLTextGroup.name == group_name)
-    #     .all()
-    # )
-    # if len(query_result) != 1:
-    #     raise Exception(f"[ERROR]: LoLTextGroup ({group_name}) doesn't exist")
-
-    # group: LoLTextGroup = query_result[0]
-
     return session.query(LoLText).filter(LoLText.group == group_name).all()
 
 
