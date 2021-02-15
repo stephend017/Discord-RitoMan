@@ -57,7 +57,7 @@ def mock_lol_match_data(
     return mock_lol_match_data
 
 
-def test_handle_lol_loss(
+def handle_lol_loss_helper(
     solo_killed: int = 12, single_champ_solo_deaths: int = 10
 ):
     def decorator(func):
@@ -84,7 +84,7 @@ def test_handle_lol_loss(
     return decorator
 
 
-@test_handle_lol_loss()
+@handle_lol_loss_helper()
 def test_handle_lol_loss_hard_inted(mock_send_discord_message):
     """
     Tests that the function handle lol loss works correctly
@@ -96,7 +96,7 @@ def test_handle_lol_loss_hard_inted(mock_send_discord_message):
     )
 
 
-@test_handle_lol_loss(solo_killed=10)
+@handle_lol_loss_helper(solo_killed=10)
 def test_handle_lol_loss_hard_inted_all(mock_send_discord_message):
     """
     Tests that the function handle lol loss works correctly
@@ -108,7 +108,7 @@ def test_handle_lol_loss_hard_inted_all(mock_send_discord_message):
     )
 
 
-@test_handle_lol_loss(solo_killed=5, single_champ_solo_deaths=2)
+@handle_lol_loss_helper(solo_killed=5, single_champ_solo_deaths=2)
 def test_handle_lol_loss_solo_deaths_gt_solo_kills(mock_send_discord_message):
     """
     Tests that the function handle lol loss works correctly
@@ -120,7 +120,7 @@ def test_handle_lol_loss_solo_deaths_gt_solo_kills(mock_send_discord_message):
     )
 
 
-@test_handle_lol_loss(solo_killed=0, single_champ_solo_deaths=0)
+@handle_lol_loss_helper(solo_killed=0, single_champ_solo_deaths=0)
 def test_handle_lol_loss_solo_deaths_lt_solo_kills(mock_send_discord_message):
     """
     Tests that the function handle lol loss works correctly

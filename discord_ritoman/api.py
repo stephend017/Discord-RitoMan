@@ -236,6 +236,8 @@ def dump_lol_winrate():
         "good evening degens, I'm here to glorify those who carried and shame those who inted"
     )
 
+    played_count: int = 0
+
     for user in users:
         # discord_id = user[0]
         # wins = user[1]
@@ -245,6 +247,7 @@ def dump_lol_winrate():
             # skip users that dont play
             continue
 
+        played_count += 1
         if user.wins > user.losses:
             send_discord_message(
                 f"<@{user.discord_id}> carried today with {user.wins} wins and {user.losses} losses, good job summoner"
@@ -259,6 +262,11 @@ def dump_lol_winrate():
             send_discord_message(
                 f"<@{user.discord_id}> inted today with {user.wins} wins and {user.losses} losses. you fucked up, but im sure it was your team who trolled and not your fault"
             )
+
+    if played_count == 0:
+        send_discord_message(
+            "Well fuck you little shits didn't play a single game. how sad."
+        )
 
     logger.info("wiping todays stats")
     # reset_all_lol_user_winrates()

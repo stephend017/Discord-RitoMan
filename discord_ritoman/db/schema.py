@@ -24,13 +24,15 @@ class LoLUser(Base):
     wins = Column(Integer)
     losses = Column(Integer)
 
-    def __init__(self, discord_id, riot_puuid, winrate=False):
+    def __init__(
+        self, discord_id, riot_puuid, winrate=False, wins=0, losses=0
+    ):
         self.discord_id = discord_id
         self.riot_puuid = riot_puuid
         self.last_updated = unix_time_millis(datetime.datetime.now())
         self.winrate = winrate
-        self.wins = 0
-        self.losses = 0
+        self.wins = wins
+        self.losses = losses
 
 
 class LoLTextGroup(Base):
