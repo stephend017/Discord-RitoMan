@@ -12,19 +12,6 @@ from discord_ritoman.models import GameResult
 from discord_ritoman.discord_api import send_discord_message
 from typing import Any, Dict, List
 from discord_ritoman.lol_match_metadata import LoLMatchMetadata
-
-# from discord_ritoman.db_api import (
-# add_new_lol_game,
-# does_user_record_lol_winrate,
-# get_all_discord_users,
-# get_all_lol_users_winrate,
-# get_all_prefixes,
-# get_last_recorded_time,
-# reset_all_lol_user_winrates,
-# set_last_recorded_time,
-# get_all_stat_prefixes_01,
-# get_all_suffixes,
-# )
 from discord_ritoman.lol_api import (
     get_account_id,
     get_matches,
@@ -40,16 +27,15 @@ logger = create_logger(__file__)
 def handle_lol_loss(
     data: LoLMatchData,
     user: LoLUser,
-    account_id,
     prefixes: List[LoLText],
     stat_prefixes_01: List[LoLText],
     suffixes: List[LoLText],
-    champion,
+    champion: str,
 ):
     """"""
     logger.info("HANDLING LOL LOSS")
-    solo_kills: int = data.get_solo_kills(account_id)
-    solo_deaths: int = data.get_solo_killed(account_id)
+    solo_kills: int = data.get_solo_kills()
+    solo_deaths: int = data.get_solo_killed()
     kills, deaths = data.get_feeding_data()
 
     logger.info("LOADED LOL LOSS DATA")
@@ -132,13 +118,7 @@ def handle_lol_match(
     # than solo deaths
     if not data.did_account_win(account_id):
         handle_lol_loss(
-            data,
-            user,
-            account_id,
-            prefixes,
-            stat_prefixes_01,
-            suffixes,
-            champion,
+            data, user, prefixes, stat_prefixes_01, suffixes, champion,
         )
         # if does_user_record_lol_winrate(user_info[0]):
         #     add_new_lol_game(user_info[0], GameResult.LOSS)
