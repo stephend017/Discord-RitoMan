@@ -7,7 +7,8 @@ module.exports = {
       DB_PASS: process.env.DB_PASS,
       RIOT_TOKEN: process.env.RIOT_TOKEN,
       DISCORD_BOT: process.env.DISCORD_BOT,
-      DISCORD_RITOMAN_BOT: process.env.DISCORD_RITOMAN_BOT
+      DISCORD_RITOMAN_BOT: process.env.DISCORD_RITOMAN_BOT,
+      APP_CONFIG: process.env.APP_CONFIG
     }
   },
     {
@@ -18,7 +19,8 @@ module.exports = {
         DB_PASS: process.env.DB_PASS,
         RIOT_TOKEN: process.env.RIOT_TOKEN,
         DISCORD_BOT: process.env.DISCORD_BOT,
-        DISCORD_RITOMAN_BOT: process.env.DISCORD_RITOMAN_BOT
+        DISCORD_RITOMAN_BOT: process.env.DISCORD_RITOMAN_BOT,
+        APP_CONFIG: process.env.APP_CONFIG
       }
     }],
 
@@ -35,7 +37,8 @@ module.exports = {
         DB_PASS: process.env.DB_PASS,
         RIOT_TOKEN: process.env.RIOT_TOKEN,
         DISCORD_BOT: process.env.DISCORD_BOT,
-        DISCORD_RITOMAN_BOT: process.env.DISCORD_RITOMAN_BOT
+        DISCORD_RITOMAN_BOT: process.env.DISCORD_RITOMAN_BOT,
+        APP_CONFIG: process.env.APP_CONFIG
       }
     }
   }
