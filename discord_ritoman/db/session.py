@@ -7,7 +7,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from discord_ritoman.utils import dynamic_import_class, get_db_uri
-from discord_ritoman.db.schema import Base
 
 config_name = os.getenv("APP_CONFIG", "TestingConfig")
 config = dynamic_import_class("discord_ritoman.db.config", config_name)
