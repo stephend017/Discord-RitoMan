@@ -14,6 +14,11 @@ def lol_text_group_usage() -> str:
     return "text to be displayed at the end of a rich message"
 
 
+@pytest.fixture
+def lol_user() -> int:
+    return 1234
+
+
 def setup_module(module):
     """ setup any state specific to the execution of the given module."""
     # remove mock text
@@ -39,26 +44,30 @@ def teardown_module(module):
     session.commit()
 
 
-def test_create_lol_text_group(lol_text_group_name, lol_text_group_usage):
+def test_create_lol_text_group(
+    lol_text_group_name, lol_text_group_usage, lol_user
+):
     """
     Tests that a lol text group can be created successfully
     """
     assert len(session.query(LoLTextGroup).all()) == 0
 
-    text_group = LoLTextGroup(lol_text_group_name, lol_text_group_usage)
+    text_group = LoLTextGroup(
+        lol_text_group_name, lol_text_group_usage, lol_user
+    )
     session.add(text_group)
     session.commit()
 
     assert len(session.query(LoLTextGroup).all()) == 1
 
 
-def test_create_lol_text(lol_text_group_name):
+def test_create_lol_text(lol_text_group_name, lol_user):
     """
     Tests that a lol text can be created successfully
     """
     assert len(session.query(LoLText).all()) == 0
 
-    text = LoLText(lol_text_group_name, "ending.")
+    text = LoLText(lol_text_group_name, "ending.", lol_user)
     session.add(text)
     session.commit()
 
@@ -78,14 +87,18 @@ def test_delete_lol_text():
     assert len(session.query(LoLText).all()) == 0
 
 
-def test_delete_lol_text_group(lol_text_group_name, lol_text_group_usage):
+def test_delete_lol_text_group(
+    lol_text_group_name, lol_text_group_usage, lol_user
+):
     """
     Tests that a lol text group can be deleted successfully
     """
     queried_groups = session.query(LoLTextGroup).all()
     group = None
     if len(queried_groups) != 1:
-        group = LoLTextGroup(lol_text_group_name, lol_text_group_usage)
+        group = LoLTextGroup(
+            lol_text_group_name, lol_text_group_usage, lol_user
+        )
         session.add(group)
         session.commit()
     else:

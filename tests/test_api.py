@@ -71,9 +71,9 @@ def handle_lol_loss_helper(
             handle_lol_loss(
                 lol_match_data,
                 user,
-                [LoLText("p", "prefix")],
-                [LoLText("sp", "stat_prefix")],
-                [LoLText("s", "suffix")],
+                [LoLText("p", "prefix", 1234)],
+                [LoLText("sp", "stat_prefix", 1234)],
+                [LoLText("s", "suffix", 1234)],
                 "Bitch",
             )
 

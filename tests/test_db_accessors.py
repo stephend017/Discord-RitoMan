@@ -30,8 +30,8 @@ def mock_text_groups() -> List[LoLTextGroup]:
     Returns all mock text groups used by this module
     """
     return [
-        LoLTextGroup("prefix", "text before message"),
-        LoLTextGroup("suffix", "text after message"),
+        LoLTextGroup("prefix", "text before message", 1234),
+        LoLTextGroup("suffix", "text after message", 1234),
     ]
 
 
@@ -40,9 +40,9 @@ def mock_text(group1: LoLTextGroup, group2: LoLTextGroup) -> List[LoLText]:
     Returns all mock text
     """
     return [
-        LoLText("prefix", "testing 1"),
-        LoLText("prefix", "2 testing"),
-        LoLText("suffix", "another one"),
+        LoLText("prefix", "testing 1", 1234),
+        LoLText("prefix", "2 testing", 1234),
+        LoLText("suffix", "another one", 1234),
     ]
 
 

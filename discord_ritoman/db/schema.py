@@ -1,10 +1,18 @@
 import datetime
 import uuid
 
+from sqlalchemy.sql.expression import update
+
 from discord_ritoman.utils import unix_time_millis
 from sqlalchemy import Column
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import BigInteger, Boolean, Integer, String
+from sqlalchemy.sql.sqltypes import (
+    BigInteger,
+    Boolean,
+    DateTime,
+    Integer,
+    String,
+)
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -42,18 +50,16 @@ class LoLTextGroup(Base):
     """
 
     __tablename__ = "lol_text_group"
-    # uuid = Column(
-    #     String(32), primary_key=True
-    # )  # UUID4 returns 32 character hex string
     name = Column(String(32), primary_key=True)
     usage = Column(String)
-    # identifier = Column(String(8), unique=True)
+    modified = Column(DateTime)
+    modified_by = Column(BigInteger)
 
-    def __init__(self, name, usage):
-        # self.uuid = uuid.uuid4().hex
+    def __init__(self, name: str, usage: str, user: int):
         self.name = name
         self.usage = usage
-        # self.identifier = identifier
+        self.modified = datetime.datetime.now()
+        self.modified_by = user
 
 
 class LoLText(Base):
@@ -67,8 +73,12 @@ class LoLText(Base):
     )  # UUID4 returns 32 character hex string
     group = Column(String(32), ForeignKey("lol_text_group.name"))
     content = Column(String)
+    modified = Column(DateTime)
+    modified_by = Column(BigInteger)
 
-    def __init__(self, group, content):
+    def __init__(self, group, content, user):
         self.uuid = uuid.uuid4().hex
         self.group = group
         self.content = content
+        self.modified = datetime.datetime.now()
+        self.modified_by = user

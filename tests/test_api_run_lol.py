@@ -8,9 +8,9 @@ import discord_ritoman
 
 def run_lol_helper(
     users: List[LoLUser] = [LoLUser(1, "P1")],
-    p0: List[LoLText] = [LoLText("p0", "prefix")],
-    sp0: List[LoLText] = [LoLText("sp0", "stat_prefix")],
-    s0: List[LoLText] = [LoLText("s0", "suffix")],
+    p0: List[LoLText] = [LoLText("p0", "prefix", 1234)],
+    sp0: List[LoLText] = [LoLText("sp0", "stat_prefix", 1234)],
+    s0: List[LoLText] = [LoLText("s0", "suffix", 1234)],
     account_ids: Dict[str, str] = {"P1": "A1"},
     matches: Dict[str, List[LoLMatchMetadata]] = {"A1": [mock.MagicMock()]},
 ):
