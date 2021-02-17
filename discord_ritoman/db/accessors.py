@@ -133,3 +133,31 @@ def reset_all_lol_user_winrate():
     """
     session.query(LoLUser).update({"wins": 0, "losses": 0})
     session.commit()
+
+
+def add_lol_text_group(group_name: str, group_description: str, user_id: int):
+    """
+    Adds a new text group with a description to the db
+
+    Args:
+        group_name (str): the name of the group being added (must be unique)
+        group_description (str): a description of what this group is used for
+        user_id (int): the discord id of the user adding the group
+    """
+    group = LoLTextGroup(group_name, group_description, user_id)
+    session.add(group)
+    session.commit()
+
+
+def add_lol_text(group_name: str, content: str, user_id: int):
+    """
+    Adds a new text to the db
+
+    Args:
+        group_name (str): the name of the group being added (must be unique)
+        content (str): the text to be displayed
+        user_id (int): the discord id of the user adding the group
+    """
+    text = LoLText(group_name, content, user_id)
+    session.add(text)
+    session.commit()

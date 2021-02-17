@@ -1,5 +1,7 @@
 from discord_ritoman.db.schema import LoLUser
 from discord_ritoman.db.accessors import (
+    add_lol_text,
+    add_lol_text_group,
     create_new_lol_user,
     get_lol_user_by_discord_id,
     set_lol_user_winrate,
@@ -153,11 +155,13 @@ async def winrate(ctx, option, discord_user):
 
 
 @bot.command()
-async def text_group(ctx, option: str, group_name: str = ""):
+async def textgroup(
+    ctx, option: str, group_name: str = "", group_description: str = ""
+):
     """
     command to modify a text group
     """
-    # author_id = ctx.message.author.id
+    author_id = ctx.message.author.id
 
     # TODO check author permissions
 
@@ -166,7 +170,31 @@ async def text_group(ctx, option: str, group_name: str = ""):
         raise NotImplementedError
     if option == "--add":
         # add to db
+        add_lol_text_group(group_name, group_description, author_id)
+
+    if option == "--remove":
+        # remove from db
         raise NotImplementedError
+
+    await ctx.send("<:PepoG:773739956958658560>")
+
+
+@bot.command()
+async def text(ctx, option: str, group_name: str = "", content: str = ""):
+    """
+    command to modify a text
+    """
+    author_id = ctx.message.author.id
+
+    # TODO check author permissions
+
+    if option == "--list":
+        # db table dump
+        raise NotImplementedError
+    if option == "--add":
+        # add to db
+        add_lol_text(group_name, content, author_id)
+
     if option == "--remove":
         # remove from db
         raise NotImplementedError
