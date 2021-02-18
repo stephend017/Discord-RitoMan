@@ -120,13 +120,9 @@ def handle_lol_match(
         handle_lol_loss(
             data, user, prefixes, stat_prefixes_01, suffixes, champion,
         )
-        # if does_user_record_lol_winrate(user_info[0]):
-        #     add_new_lol_game(user_info[0], GameResult.LOSS)
         if user.winrate:
             update_lol_user_winrate(user, GameResult.LOSS)
     else:
-        # if does_user_record_lol_winrate(user_info[0]):
-        #     add_new_lol_game(user_info[0], GameResult.WIN)
         if user.winrate:
             update_lol_user_winrate(user, GameResult.WIN)
 
@@ -143,52 +139,11 @@ def run_lol():
     to the discord server for every bad game
     """
     logger.info("Starting lol run")
-    # users = get_all_discord_users()
     users: List[LoLUser] = get_all_lol_users()
-    # prefixes = get_all_prefixes()
     prefixes: List[LoLText] = get_lol_text_by_group("p0")
-    # stat_prefixes_01 = get_all_stat_prefixes_01()
     stat_prefixes_01: List[LoLText] = get_lol_text_by_group("sp0")
-    # suffixes = get_all_suffixes()
     suffixes: List[LoLText] = get_lol_text_by_group("s0")
 
-    # logger.info(",".join(userinfo[0] for userinfo in users))
-
-    # the old way
-    # for user_info in users:
-    #     logger.info(f"processing user {user_info[0]}")
-    #     timestamp = get_last_recorded_time(user_info[0])
-
-    #     account_id: str = ""
-    #     matches: List[LoLMatchMetadata] = []
-
-    #     try:
-    #         account_id = get_account_id(user_info[1])
-
-    #     except Exception:
-    #         logger.error(
-    #             "There was an error retrieving account data, skipping this iteration"
-    #         )
-    #         continue
-
-    #     try:
-    #         matches = get_matches(account_id, timestamp)
-    #     except Exception:
-    #         logger.error(
-    #             f"There was an error retrieving matches for account [{user_info[0]}], skipping this iteration"
-    #         )
-    #         continue
-
-    #     for match in matches:
-    #         handle_lol_match(
-    #             match,
-    #             account_id,
-    #             user_info,
-    #             timestamp,
-    #             prefixes,
-    #             stat_prefixes_01,
-    #             suffixes,
-    #         )
     for user in users:
         timestamp = user.last_updated
         account_id: str = ""
@@ -239,10 +194,6 @@ def dump_lol_winrate():
     played_count: int = 0
 
     for user in users:
-        # discord_id = user[0]
-        # wins = user[1]
-        # losses = user[2]
-
         if user.wins == 0 and user.losses == 0:
             # skip users that dont play
             continue
@@ -269,5 +220,4 @@ def dump_lol_winrate():
         )
 
     logger.info("wiping todays stats")
-    # reset_all_lol_user_winrates()
     reset_all_lol_user_winrate()
