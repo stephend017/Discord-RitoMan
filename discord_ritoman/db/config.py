@@ -49,4 +49,4 @@ class ProductionConfig:
     DEBUG = False
     TESTING = False
     RIOT_TOKEN = os.getenv("RIOT_TOKEN", "token")
-    DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK", "webhook")
+    DISCORD_WEBHOOK = os.getenv("DISCORD_BOT", "webhook")

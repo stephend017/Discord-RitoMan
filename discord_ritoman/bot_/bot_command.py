@@ -65,3 +65,10 @@ def bot_command(command_name: str):
         return w
 
     return decorator
+
+
+@bot_command("testcommand")
+class MyBotCommand:
+    @staticmethod
+    async def default(ctx, *args, **kwargs):
+        await ctx.send("yes")
