@@ -1,5 +1,6 @@
 tox
 pytest
 black
+flake8
 pre-commit
 pytest-asyncio

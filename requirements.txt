@@ -3,3 +3,5 @@ fastcore
 psycopg2
 schedule
 discord.py
+sqlalchemy
+alembic

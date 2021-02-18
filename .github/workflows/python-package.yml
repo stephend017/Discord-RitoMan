@@ -22,5 +22,11 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Tox
       run: |
-        pip install tox
-        tox
+        chmod +x ./scripts/setup_env.sh
+        ./scripts/setup_env.sh
+        chmod +x ./scripts/run_tests.sh
+        ./scripts/run_tests.sh
+        chmod +x ./scripts/cleanup_env.sh
+        ./scripts/cleanup_env.sh
+        # pip install tox
+        # tox

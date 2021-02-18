@@ -1,6 +1,8 @@
 import datetime
 import logging
+import importlib
 from logging.handlers import RotatingFileHandler
+from typing import Any
 
 
 epoch = datetime.datetime.utcfromtimestamp(0)
@@ -42,3 +44,53 @@ def create_logger(path: str) -> logging.Logger:
     logger.addHandler(my_handler)
 
     return logger
+
+
+def dynamic_import_class(module_name: str, class_name: str) -> Any:
+    """
+    Dynamically imports a class from a given module
+
+    Args:
+        module_name (str): the module to dynamically load
+        class_name (str): the class to dynamically load
+
+    Returns:
+        Any: the class from the module specified
+    """
+    dclass = None
+    module = None
+
+    # assert module existss
+    try:
+        module = importlib.import_module(module_name)
+    except ImportError:
+        print("module not found: " + module_name)
+
+    # load class from module
+    try:
+        dclass = getattr(module, class_name)
+    except Exception as e:
+        print(e)
+
+    return dclass
+
+
+def get_db_uri(
+    db_type: str, user: str, password: str, host: str, port: int, db_name: str
+) -> str:
+    """
+    builds a database uri from the given parameters
+
+    Args:
+        db_type (str): the type of database being accessed
+        user (str): the name of the user who has access to
+            the database on the host machine
+        password (str): the password for the user
+        host (str): the IP address of the host machine
+        port (int): the port to access the DB on
+        db_name (str): the name of the database to access
+
+    Returns:
+        str: the full db uri
+    """
+    return f"{db_type}://{user}:{password}@{host}:{port}/{db_name}"

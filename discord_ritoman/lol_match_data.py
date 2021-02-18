@@ -49,11 +49,11 @@ class LoLMatchData:
                 return participant["teamId"] == self.winning_team()
         raise Exception("Failed to determine if participant won")
 
-    def get_solo_kills(self, account_id: str) -> int:
+    def get_solo_kills(self) -> int:
         """"""
         return self.kill_data["solo_kills"]
 
-    def get_solo_killed(self, account_id: str) -> int:
+    def get_solo_killed(self) -> int:
         """"""
         return self.kill_data["solo_deaths"]
 
@@ -123,6 +123,8 @@ class LoLMatchData:
     def has_max_team_deaths(self):
         """
         Returns true if this user has the most deaths on their team, false otherwise
+
+        TODO make static calculation
         """
         teamId = self.get_team_id()
         max_deaths = self.kill_data["total_deaths"]

@@ -3,30 +3,7 @@ import requests
 
 from discord_ritoman.utils import create_logger
 
-# import logging
-# from logging.handlers import RotatingFileHandler
 
-# log_formatter = logging.Formatter(
-#     "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s"
-# )
-
-# logFile = "./discord_api.log"
-
-# my_handler = RotatingFileHandler(
-#     logFile,
-#     mode="a",
-#     maxBytes=5 * 1024 * 1024,
-#     backupCount=2,
-#     encoding=None,
-#     delay=0,
-# )
-# my_handler.setFormatter(log_formatter)
-# my_handler.setLevel(logging.INFO)
-
-# logger = logging.getLogger("discord-api")
-# logger.setLevel(logging.INFO)
-
-# logger.addHandler(my_handler)
 logger = create_logger(__file__)
 
 
@@ -41,7 +18,7 @@ def send_discord_message(message: str):
     Args:
         message (str): the literal text to send.
     """
-    webhook = os.getenv("DISCORD_BOT", None,)
+    webhook = os.getenv("DISCORD_BOT", None)
     if webhook is None:
         logger.critical("Unable to read webhook from environment variable")
         return
