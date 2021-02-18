@@ -9,7 +9,7 @@ while [ $build_count -lt 3 ];
 do
     echo "Started build docker image ..."
     docker build -t pg_container .
-    if [ $ret -ne 0 ]; then
+    if [ $? -ne 0 ]; then
         if [$build_count -eq 3]; then
             echo "Exceeded max number of build attempts"
             echo "Cleaning docker containers and images ..."
