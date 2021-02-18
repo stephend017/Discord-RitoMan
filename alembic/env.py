@@ -5,7 +5,7 @@ import os
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy.engine import create_engine
+from sqlalchemy.engine import create_engine, engine_from_config
 
 from discord_ritoman.db.schema import Base
 
