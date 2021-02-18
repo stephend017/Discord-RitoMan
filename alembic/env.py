@@ -1,4 +1,5 @@
 import sqlalchemy
+from sqlalchemy import pool
 from discord_ritoman.utils import dynamic_import_class, get_db_uri
 import os
 
