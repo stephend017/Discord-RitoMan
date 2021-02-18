@@ -11,11 +11,7 @@ import sys
 
 logger = create_logger(__file__)
 
-# RIOT_TOKEN = os.getenv("RIOT_TOKEN", None)
-config = dynamic_import_class(
-    "discord_ritoman.db.config", os.getenv("APP_CONFIG", "TestingConfig")
-)
-RIOT_TOKEN = config.RIOT_TOKEN
+RIOT_TOKEN = os.getenv("RIOT_TOKEN", None)
 
 
 class RiotAPIResponseHandler:
