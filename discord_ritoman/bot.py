@@ -1,4 +1,3 @@
-from discord_ritoman.bot_.bot_command import bot_command
 from discord_ritoman.db.schema import LoLUser
 from discord_ritoman.db.accessors import (
     add_lol_text,
