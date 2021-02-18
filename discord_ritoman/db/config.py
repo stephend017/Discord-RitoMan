@@ -40,8 +40,8 @@ class ProductionConfig:
     The config used for production
     """
 
-    DB_URI_BASE = "postgresql"
-    DB_USER = "postgres"
+    DB_URI_BASE = "root"
+    DB_USER = "root"
     DB_PASS = os.getenv("DB_PASS", "error")
     DB_HOST = "localhost"
     DB_PORT = os.getenv("DB_PORT", 5432)
