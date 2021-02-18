@@ -1,7 +1,7 @@
 """
 Interface for accessing riot API
 """
-from discord_ritoman.utils import create_logger
+from discord_ritoman.utils import create_logger, dynamic_import_class
 from discord_ritoman.lru_cache import lru_cache
 from typing import Any, List
 from discord_ritoman.lol_match_metadata import LoLMatchMetadata
@@ -9,34 +9,13 @@ import requests
 import os
 import sys
 
-# import logging
-# from logging.handlers import RotatingFileHandler
-
-# log_formatter = logging.Formatter(
-#     "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s"
-# )
-
-# logFile = "./lol_api.log"
-
-# my_handler = RotatingFileHandler(
-#     logFile,
-#     mode="a",
-#     maxBytes=5 * 1024 * 1024,
-#     backupCount=2,
-#     encoding=None,
-#     delay=0,
-# )
-# my_handler.setFormatter(log_formatter)
-# my_handler.setLevel(logging.INFO)
-
-# logger = logging.getLogger("lol-api")
-# logger.setLevel(logging.INFO)
-
-# logger.addHandler(my_handler)
-
 logger = create_logger(__file__)
 
-RIOT_TOKEN = os.getenv("RIOT_TOKEN", None)
+# RIOT_TOKEN = os.getenv("RIOT_TOKEN", None)
+config = dynamic_import_class(
+    "discord_ritoman.db.config", os.getenv("APP_CONFIG", "TestingConfig")
+)
+RIOT_TOKEN = config.RIOT_TOKEN
 
 
 class RiotAPIResponseHandler:

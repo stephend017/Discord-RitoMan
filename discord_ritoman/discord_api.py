@@ -1,7 +1,7 @@
 import os
 import requests
 
-from discord_ritoman.utils import create_logger
+from discord_ritoman.utils import create_logger, dynamic_import_class
 
 
 logger = create_logger(__file__)
@@ -18,7 +18,11 @@ def send_discord_message(message: str):
     Args:
         message (str): the literal text to send.
     """
-    webhook = os.getenv("DISCORD_BOT", None)
+    # webhook = os.getenv("DISCORD_BOT", None)
+    config = dynamic_import_class(
+        "discord_ritoman.db.config", os.getenv("APP_CONFIG", "TestingConfig")
+    )
+    webhook = config.DISCORD_WEBHOOK
     if webhook is None:
         logger.critical("Unable to read webhook from environment variable")
         return
