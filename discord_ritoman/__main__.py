@@ -1,3 +1,4 @@
+from discord_ritoman.bot_.bot_command import bot_command
 import schedule
 from discord_ritoman.api import dump_lol_winrate, run_lol
 import time
@@ -15,6 +16,14 @@ def main():
     while True:
         schedule.run_pending()
         time.sleep(60)  # check every minute
+
+
+# temporary
+@bot_command("testcommand")
+class MyBotCommand:
+    @staticmethod
+    async def default(ctx, *args, **kwargs):
+        await ctx.send("yes")
 
 
 if __name__ == "__main__":
