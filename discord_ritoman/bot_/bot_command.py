@@ -13,26 +13,19 @@ def bot_command(command_name: str):
             def __init__(self):
                 self.options = {}
                 self.default_option = default_func
+                self.main_func = None
 
-            @bot.command(name=command_name)
-            async def execute(ctx, *args, **kwargs):
-                global GLOBAL_COMMAND_TABLE
-                if len([*args]) > 0:
-                    option = f"option_{args[0]}"
-                    if option in GLOBAL_COMMAND_TABLE[command_name].options:
-                        await GLOBAL_COMMAND_TABLE[command_name].options[
-                            option
-                        ].__get__(GLOBAL_COMMAND_TABLE[command_name])(
-                            ctx, *args[1:], **kwargs
-                        )
-                    else:
-                        await GLOBAL_COMMAND_TABLE[
-                            command_name
-                        ].default_option.__get__(
-                            GLOBAL_COMMAND_TABLE[command_name]
-                        )(
-                            ctx, *args, **kwargs
-                        )
+        @bot.command(name=command_name)
+        async def execute(ctx, *args, **kwargs):
+            global GLOBAL_COMMAND_TABLE
+            if len([*args]) > 0:
+                option = f"option_{args[0]}"
+                if option in GLOBAL_COMMAND_TABLE[command_name].options:
+                    await GLOBAL_COMMAND_TABLE[command_name].options[
+                        option
+                    ].__get__(GLOBAL_COMMAND_TABLE[command_name])(
+                        ctx, *args[1:], **kwargs
+                    )
                 else:
                     await GLOBAL_COMMAND_TABLE[
                         command_name
@@ -41,6 +34,12 @@ def bot_command(command_name: str):
                     )(
                         ctx, *args, **kwargs
                     )
+            else:
+                await GLOBAL_COMMAND_TABLE[
+                    command_name
+                ].default_option.__get__(GLOBAL_COMMAND_TABLE[command_name])(
+                    ctx, *args, **kwargs
+                )
 
         w = Wrapper()
 
@@ -55,6 +54,7 @@ def bot_command(command_name: str):
                 # this is for options that have flags
                 w.options[key] = value
 
+        w.main_func = execute
         if command_name in GLOBAL_COMMAND_TABLE:
             raise ValueError(f"{command_name} has already been defined")
 

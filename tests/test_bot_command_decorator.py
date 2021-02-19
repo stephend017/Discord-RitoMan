@@ -31,9 +31,13 @@ async def test_bot_command_decorator():
             count += 1
 
     assert count == len(GLOBAL_COMMAND_TABLE.items()) > 0
+    assert "testcommand" in GLOBAL_COMMAND_TABLE
+    assert "mycommand" in GLOBAL_COMMAND_TABLE
 
-    await MyBotCommand.execute(AsyncMock(), "one", "four", 3)
-    await MyBotCommand.execute(AsyncMock())
+    await GLOBAL_COMMAND_TABLE["mycommand"].main_func(
+        AsyncMock(), "one", "four", 3
+    )
+    await GLOBAL_COMMAND_TABLE["mycommand"].main_func(AsyncMock())
     mock_logger.assert_has_calls(
         [call("default"), call("option one")], any_order=True
     )
