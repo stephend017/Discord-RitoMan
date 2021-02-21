@@ -61,7 +61,8 @@ def bot_command(command_name: str):
         if command_name in GLOBAL_COMMAND_TABLE:
             raise ValueError(f"{command_name} has already been defined")
 
-        logger.info(GLOBAL_COMMAND_TABLE)
+        logger.info(command_name)
+        logger.info(bot.all_commands)
 
         GLOBAL_COMMAND_TABLE[command_name] = w
 

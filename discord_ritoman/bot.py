@@ -18,12 +18,12 @@ bot = commands.Bot(command_prefix="<@!779328785043554334> ")
 logger = create_logger(__file__)
 
 
-@bot.command()
-async def denounce(ctx, user):
-    """
-    denounces a user
-    """
-    await ctx.send(f"{user} is tonights biggest loser")
+# @bot.command()
+# async def denounce(ctx, user):
+#     """
+#     denounces a user
+#     """
+#     await ctx.send(f"{user} is tonights biggest loser")
 
 
 # TODO flame command
