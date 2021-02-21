@@ -35,6 +35,7 @@ async def test_bot_command_decorator():
     assert "mycommand" in GLOBAL_COMMAND_TABLE
     assert "testcommand" in bot.all_commands
     assert "mycommand" in bot.all_commands
+    assert "denounce" in bot.all_commands
 
     await MyBotCommand(AsyncMock(), "one", "four", 3)
     await MyBotCommand(AsyncMock())
