@@ -1,4 +1,7 @@
 from discord_ritoman.bot import bot
+from discord_ritoman.utils import create_logger
+
+logger = create_logger(__file__)
 
 GLOBAL_COMMAND_TABLE = {}
 
@@ -13,7 +16,7 @@ def bot_command(command_name: str):
             def __init__(self):
                 self.options = {}
                 self.default_option = default_func
-                self.main_func = None
+                self.main_func = default_func
 
         @bot.command(name=command_name)
         async def execute(ctx, *args, **kwargs):
@@ -58,8 +61,10 @@ def bot_command(command_name: str):
         if command_name in GLOBAL_COMMAND_TABLE:
             raise ValueError(f"{command_name} has already been defined")
 
+        logger.info(GLOBAL_COMMAND_TABLE)
+
         GLOBAL_COMMAND_TABLE[command_name] = w
 
-        return w
+        return execute
 
     return decorator
