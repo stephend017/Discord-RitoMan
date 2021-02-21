@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock, call
-from discord_ritoman.bot import bot
-from discord_ritoman.bot_.bot_command import GLOBAL_COMMAND_TABLE, bot_command
+from discord_ritoman.bot.bot import bot
+from discord_ritoman.bot.bot_command import GLOBAL_COMMAND_TABLE, bot_command
 from discord_ritoman.utils import create_logger
 
 logger = create_logger(__file__)

@@ -13,7 +13,7 @@ module.exports = {
   },
     {
       name: "ritoman-bot",
-      script: "discord_ritoman/bot.py",
+      script: "discord_ritoman/bot/__main__.py",
       interpreter: "python3",
       env: {
         DB_PASS: process.env.DB_PASS,

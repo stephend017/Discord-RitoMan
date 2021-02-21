@@ -6,8 +6,8 @@ from tests.helpers import discord_ctx_mock
 
 from unittest import mock
 
-import discord_ritoman.bot
-from discord_ritoman.bot import register
+import discord_ritoman.bot.bot
+from discord_ritoman.bot.bot import register
 from discord_ritoman.db.session import session
 
 
@@ -28,7 +28,7 @@ def teardown_module(module):
 
 
 @pytest.mark.asyncio
-@mock.patch.object(discord_ritoman.bot, "get_puuid")
+@mock.patch.object(discord_ritoman.bot.bot, "get_puuid")
 async def test_register(mock_get_puuid):
     """
     Tests that the register command works correctly

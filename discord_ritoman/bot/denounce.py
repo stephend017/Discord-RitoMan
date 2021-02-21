@@ -1,4 +1,4 @@
-from discord_ritoman.bot import bot
+from discord_ritoman.bot.bot import bot
 
 
 @bot.command()

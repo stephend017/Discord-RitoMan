@@ -1,4 +1,4 @@
-from discord_ritoman.bot import bot
+from discord_ritoman.bot.bot import bot
 from discord_ritoman.utils import create_logger
 
 logger = create_logger(__file__)

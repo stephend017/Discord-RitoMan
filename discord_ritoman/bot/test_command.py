@@ -1,5 +1,5 @@
 # temporary
-from discord_ritoman.bot_.bot_command import bot_command
+from discord_ritoman.bot.bot_command import bot_command
 
 
 @bot_command("testcommand")

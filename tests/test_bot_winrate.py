@@ -9,8 +9,8 @@ from unittest import mock
 from tests.mock.discord_mocks import mock_discord_bot, mock_discord_user
 from tests.helpers import discord_ctx_mock
 
-import discord_ritoman.bot
-from discord_ritoman.bot import winrate
+import discord_ritoman.bot.bot
+from discord_ritoman.bot.bot import winrate
 
 
 def lol_user_discord_id() -> int:
@@ -61,7 +61,7 @@ def winrate_test_helper(
 ):
     def decorator(func):
         @pytest.mark.asyncio
-        @mock.patch.object(discord_ritoman.bot, "bot")
+        @mock.patch.object(discord_ritoman.bot.bot, "bot")
         async def wrapper(mock_bot):
             ctx = discord_ctx_mock()
             user = None
