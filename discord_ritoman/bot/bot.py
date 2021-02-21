@@ -18,14 +18,6 @@ bot = commands.Bot(command_prefix="<@!779328785043554334> ")
 logger = create_logger(__file__)
 
 
-# @bot.command()
-# async def denounce(ctx, user):
-#     """
-#     denounces a user
-#     """
-#     await ctx.send(f"{user} is tonights biggest loser")
-
-
 # TODO flame command
 # scenario cj talking shit, akshay wants to put him
 # in his place. the solution the flame command.
@@ -200,16 +192,3 @@ async def text(ctx, option: str, group_name: str = "", content: str = ""):
         raise NotImplementedError
 
     await ctx.send("<:PepoG:773739956958658560>")
-
-
-def main():
-    """"""
-    token: str = os.getenv("DISCORD_RITOMAN_BOT", None)
-    if token is None:
-        logger.critical("Failed to load Discord bot token.")
-        raise Exception("Failed to load Discord bot token.")
-    bot.run(token)
-
-
-if __name__ == "__main__":
-    main()
