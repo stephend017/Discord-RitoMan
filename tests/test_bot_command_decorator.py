@@ -38,6 +38,7 @@ async def test_bot_command_decorator():
 
     await MyBotCommand(AsyncMock(), "one", "four", 3)
     await MyBotCommand(AsyncMock())
+
     mock_logger.assert_has_calls(
         [call("default"), call("option one")], any_order=True
     )
