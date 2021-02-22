@@ -43,3 +43,8 @@ async def test_bot_command_decorator():
     mock_logger.assert_has_calls(
         [call("default"), call("option one")], any_order=True
     )
+
+
+def test_help_string_contained():
+    """"""
+    assert bot.all_commands["testcommand"].help == "this is a testing command"
