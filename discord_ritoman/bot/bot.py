@@ -169,26 +169,3 @@ async def textgroup(
         raise NotImplementedError
 
     await ctx.send("<:PepoG:773739956958658560>")
-
-
-@bot.command()
-async def text(ctx, option: str, group_name: str = "", content: str = ""):
-    """
-    command to modify a text
-    """
-    author_id = ctx.message.author.id
-
-    # TODO check author permissions
-
-    if option == "--list":
-        # db table dump
-        raise NotImplementedError
-    if option == "--add":
-        # add to db
-        add_lol_text(group_name, content, author_id)
-
-    if option == "--remove":
-        # remove from db
-        raise NotImplementedError
-
-    await ctx.send("<:PepoG:773739956958658560>")

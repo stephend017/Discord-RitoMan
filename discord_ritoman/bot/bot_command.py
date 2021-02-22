@@ -14,6 +14,9 @@ async def handle_execute(command_name: str, ctx, *args, **kwargs):
     """"""
     global GLOBAL_COMMAND_TABLE
     if len([*args]) > 0:
+        if args[0].startswith("--"):
+            args[0] = args[0][2:]
+
         option = f"option_{args[0]}"
         if option in GLOBAL_COMMAND_TABLE[command_name].options:
             await GLOBAL_COMMAND_TABLE[command_name].options[option].__get__(
