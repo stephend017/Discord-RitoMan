@@ -146,26 +146,26 @@ async def winrate(ctx, option, discord_user):
     await ctx.send("<:PepoG:773739956958658560>")
 
 
-@bot.command()
-async def textgroup(
-    ctx, option: str, group_name: str = "", group_description: str = ""
-):
-    """
-    command to modify a text group
-    """
-    author_id = ctx.message.author.id
+# @bot.command()
+# async def textgroup(
+#     ctx, option: str, group_name: str = "", group_description: str = ""
+# ):
+#     """
+#     command to modify a text group
+#     """
+#     author_id = ctx.message.author.id
 
-    # TODO check author permissions
+#     # TODO check author permissions
 
-    if option == "--list":
-        # db table dump
-        raise NotImplementedError
-    if option == "--add":
-        # add to db
-        add_lol_text_group(group_name, group_description, author_id)
+#     if option == "--list":
+#         # db table dump
+#         raise NotImplementedError
+#     if option == "--add":
+#         # add to db
+#         add_lol_text_group(group_name, group_description, author_id)
 
-    if option == "--remove":
-        # remove from db
-        raise NotImplementedError
+#     if option == "--remove":
+#         # remove from db
+#         raise NotImplementedError
 
-    await ctx.send("<:PepoG:773739956958658560>")
+#     await ctx.send("<:PepoG:773739956958658560>")

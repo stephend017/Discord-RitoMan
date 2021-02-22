@@ -1,9 +1,9 @@
 from discord_ritoman.bot.bot_command import bot_command
-from discord_ritoman.db.accessors import add_lol_text
+from discord_ritoman.db.accessors import add_lol_text_group
 
 
-@bot_command("text")
-class TextCommand:
+@bot_command("textgroup")
+class TextGroupCommand:
     @staticmethod
     async def default(ctx, *args, **kwargs):
         await ctx.send("<:PepoG:773739956958658560>")
@@ -14,10 +14,11 @@ class TextCommand:
 
     @staticmethod
     async def option_add(ctx, *args, **kwargs):
-        group_name: str = args[0]
-        content: str = args[1]
         author_id = ctx.message.author.id
-        add_lol_text(group_name, content, author_id)
+        group_name: str = args[0]
+        group_description: str = args[1]
+
+        add_lol_text_group(group_name, group_description, author_id)
 
     @staticmethod
     async def option_remove(ctx, *args, **kwargs):
@@ -26,10 +27,10 @@ class TextCommand:
     @staticmethod
     def help():
         return """
-        Function to add, list and remove text from the ritoman database
+        Function to add, list and remove textgroups from the ritoman database
 
         Usage:
-            @ritoman text --add <group_name> <content>
-            @ritoman text --list <group_name>
-            @ritoman text --remove <hash>
+            @ritoman textgroup --add <group_name> <group_description>
+            @ritoman textgroup --list
+            @ritoman textgroup --remove <group_name>
         """
