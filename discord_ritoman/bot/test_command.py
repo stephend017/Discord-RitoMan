@@ -7,3 +7,7 @@ class AnotherBotCommand:
     @staticmethod
     async def default(ctx, *args, **kwargs):
         await ctx.send("yes")
+
+    @staticmethod
+    def help() -> str:
+        return "this is a testing command"
