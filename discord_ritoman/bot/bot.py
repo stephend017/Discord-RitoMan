@@ -1,10 +1,8 @@
 from discord_ritoman.db.schema import LoLUser
 from discord_ritoman.db.accessors import (
-    create_new_lol_user,
     get_lol_user_by_discord_id,
     set_lol_user_winrate,
 )
-from discord_ritoman.lol_api import get_puuid
 from discord.ext import commands
 
 from discord_ritoman.utils import create_logger
