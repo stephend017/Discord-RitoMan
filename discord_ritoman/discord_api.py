@@ -7,7 +7,7 @@ from discord_ritoman.utils import create_logger, dynamic_import_class
 logger = create_logger(__file__)
 
 
-def send_discord_message(message: str):
+def send_discord_message(message: str, tts: bool = False):
     """
     Sends a message to the discord server
 
@@ -23,7 +23,7 @@ def send_discord_message(message: str):
         logger.critical("Unable to read webhook from environment variable")
         return
 
-    response = requests.post(webhook, json={"content": message})
+    response = requests.post(webhook, json={"content": message, "tts": tts})
 
     if not response.ok:
         print(

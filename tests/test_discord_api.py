@@ -19,4 +19,6 @@ def test_send_discord_message(mock_post, mock_getenv):
 
     send_discord_message(message)
 
-    mock_post.assert_called_once_with(webhook, json={"content": message})
+    mock_post.assert_called_once_with(
+        webhook, json={"content": message, "tts": False}
+    )

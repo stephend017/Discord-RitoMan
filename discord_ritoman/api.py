@@ -63,7 +63,7 @@ def handle_lol_loss(
             else:
                 message += f"{max_solo_deaths_to_champ} / {solo_deaths} of their solo deaths"
 
-            send_discord_message(message)
+            send_discord_message(message, True)
         elif solo_kills < solo_deaths:
             prefix_index: int = random.randint(0, len(prefixes) - 1)
             stat_prefix_01_index: int = random.randint(
@@ -72,7 +72,8 @@ def handle_lol_loss(
             suffix_index: int = random.randint(0, len(suffixes) - 1)
             send_discord_message(
                 # f"{prefixes[prefix_index][0]} <@{user_info[2]}> {stat_prefixes_01[stat_prefix_01_index][0]} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index][0]}"
-                f"{prefixes[prefix_index].content} <@{user.discord_id}> {stat_prefixes_01[stat_prefix_01_index].content} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index].content}"
+                f"{prefixes[prefix_index].content} <@{user.discord_id}> {stat_prefixes_01[stat_prefix_01_index].content} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index].content}",
+                True,
             )
         else:
             send_discord_message(
