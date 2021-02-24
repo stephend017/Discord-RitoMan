@@ -1,13 +1,13 @@
+from discord_ritoman.bot.register import RegisterCommand
 from discord_ritoman.db.schema import LoLUser
 import pytest
 
-from tests.mock.discord_mocks import mock_discord_bot, mock_discord_user
+from tests.mock.discord_mocks import mock_discord_user
 from tests.helpers import discord_ctx_mock
 
 from unittest import mock
 
 import discord_ritoman.bot.bot
-from discord_ritoman.bot.bot import register
 from discord_ritoman.db.session import session
 
 
@@ -28,7 +28,7 @@ def teardown_module(module):
 
 
 @pytest.mark.asyncio
-@mock.patch.object(discord_ritoman.bot.bot, "get_puuid")
+@mock.patch.object(discord_ritoman.bot.register, "get_puuid")
 async def test_register(mock_get_puuid):
     """
     Tests that the register command works correctly
@@ -41,7 +41,7 @@ async def test_register(mock_get_puuid):
     ctx = discord_ctx_mock()
     mock_get_puuid.return_value = riot_puuid
 
-    await register(ctx, discord_user, summoner_name)
+    await RegisterCommand(ctx, discord_user, summoner_name)
 
     mock_get_puuid.assert_called_once_with(summoner_name)
     ctx.send.assert_called_once_with(
@@ -61,7 +61,7 @@ async def test_register_get_puuid_fails():
 
     ctx = discord_ctx_mock()
 
-    await register(ctx, discord_user, summoner_name)
+    await RegisterCommand(ctx, discord_user, summoner_name)
 
     ctx.send.assert_called_once_with(
         f"Unable to find summoner {summoner_name}. Are you sure this summoner exists?"
