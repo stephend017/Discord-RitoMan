@@ -1,1 +1,8 @@
-__all__ = ["denounce", "test_command", "bot_command", "text", "textgroup"]
+__all__ = [
+    "denounce",
+    "test_command",
+    "bot_command",
+    "text",
+    "textgroup",
+    "register",
+]

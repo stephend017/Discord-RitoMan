@@ -92,7 +92,8 @@ def test_handle_lol_loss_hard_inted(mock_send_discord_message):
     total_deaths / 2
     """
     mock_send_discord_message.assert_called_once_with(
-        f"well well well, dinner has been served because <@{mock_discord_id()}> fed the absolute shit out of MasterLi giving them 10 / 12 of their solo deaths"
+        f"well well well, dinner has been served because <@{mock_discord_id()}> fed the absolute shit out of MasterLi giving them 10 / 12 of their solo deaths",
+        True,
     )
 
 
@@ -104,7 +105,8 @@ def test_handle_lol_loss_hard_inted_all(mock_send_discord_message):
     total_deaths / 2 and all solo deaths go to the same champion
     """
     mock_send_discord_message.assert_called_once_with(
-        f"well well well, dinner has been served because <@{mock_discord_id()}> fed the absolute shit out of MasterLi giving them all 10 of their solo deaths"
+        f"well well well, dinner has been served because <@{mock_discord_id()}> fed the absolute shit out of MasterLi giving them all 10 of their solo deaths",
+        True,
     )
 
 
@@ -116,7 +118,8 @@ def test_handle_lol_loss_solo_deaths_gt_solo_kills(mock_send_discord_message):
     solo kills
     """
     mock_send_discord_message.assert_called_once_with(
-        f"prefix <@{mock_discord_id()}> stat_prefix 5 solo deaths and only 0 solo kills as Bitch in their latest defeat in league of legends. suffix"
+        f"prefix <@{mock_discord_id()}> stat_prefix 5 solo deaths and only 0 solo kills as Bitch in their latest defeat in league of legends. suffix",
+        True,
     )
 
 
