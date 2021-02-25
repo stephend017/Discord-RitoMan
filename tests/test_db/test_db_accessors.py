@@ -1,6 +1,4 @@
 from discord_ritoman.models import GameResult
-import pytest
-
 
 from typing import List
 from discord_ritoman.db.accessors import (
