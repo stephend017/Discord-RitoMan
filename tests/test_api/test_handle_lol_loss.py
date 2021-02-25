@@ -1,9 +1,16 @@
+from tests.mock.mock_match_data import (
+    get_mock_match_data,
+    get_mock_match_data_account_id,
+    get_mock_match_timeline,
+)
+from discord_ritoman.lol.stats.match_stat import (
+    reset_statistics,
+    set_lol_data_context,
+)
 from discord_ritoman.db.schema import LoLText, LoLUser
 import discord_ritoman
 from discord_ritoman.api import handle_lol_loss
-from unittest.mock import MagicMock
 from unittest import mock
-import discord_ritoman.lol_match_data
 
 
 def mock_discord_id() -> int:
@@ -13,63 +20,37 @@ def mock_discord_id() -> int:
     return 1234
 
 
-def mock_lol_match_data(
-    solo_kills: int = 0,
-    solo_killed: int = 12,
-    single_champ_solo_kills: int = 0,
-    single_champ_solo_deaths: int = 10,
-    total_deaths: int = 15,
-    has_max_team_deaths: bool = True,
-    champ_name: str = "MasterLi",
-):
-    """
-    Returns a mock lol match data object
-
-    Args:
-        solo_kills (int): the number of solo kills this user got
-        solo_killed (int): the number of solo deaths this user got
-        single_champ_solo_kills (int): the number of solo kills on the same champ
-            for testing purposes it is assumed this is a max
-        single_champ_solo_deaths (int): the number of solor deaths on the same champ
-            for testing purposes it is assumed this is a max
-        total_deaths (int): the total deaths for this user (solo included)
-        has_max_team_deaths (bool): flag if this user died the most on their team
-        champ_name (str): value to return from `get_champion_name_from_participant_id`
-    """
-    mock_lol_match_data = MagicMock()
-    mock_lol_match_data.get_solo_kills = MagicMock()
-    mock_lol_match_data.get_solo_kills.return_value = solo_kills
-    mock_lol_match_data.get_solo_killed = MagicMock()
-    mock_lol_match_data.get_solo_killed.return_value = solo_killed
-    mock_lol_match_data.get_feeding_data = MagicMock()
-    mock_lol_match_data.get_feeding_data.return_value = (
-        {3: single_champ_solo_kills},  # who fed me
-        {3: single_champ_solo_deaths},  # who i fed
-    )
-    mock_lol_match_data.get_total_deaths = MagicMock()
-    mock_lol_match_data.get_total_deaths.return_value = total_deaths
-    mock_lol_match_data.has_max_team_deaths = MagicMock()
-    mock_lol_match_data.has_max_team_deaths.return_value = has_max_team_deaths
-    mock_lol_match_data.get_champion_name_from_pariticpant_id = MagicMock()
-    mock_lol_match_data.get_champion_name_from_pariticpant_id.return_value = (
-        champ_name
-    )
-    return mock_lol_match_data
-
-
 def handle_lol_loss_helper(
-    solo_killed: int = 12, single_champ_solo_deaths: int = 10
+    solo_deaths: int = 12, single_champ_solo_deaths: int = 10
 ):
     def decorator(func):
+        @mock.patch.object(discord_ritoman.api, "get_stat")
         @mock.patch.object(discord_ritoman.api, "send_discord_message")
-        def wrapper(mock_send_discord_message):
-            lol_match_data = mock_lol_match_data(
-                solo_killed=solo_killed,
-                single_champ_solo_deaths=single_champ_solo_deaths,
+        def wrapper(mock_send_discord_message, mock_get_stat):
+            match_data = get_mock_match_data()
+            match_timeline = get_mock_match_timeline()
+
+            set_lol_data_context(
+                match_data, match_timeline, get_mock_match_data_account_id()
             )
+            reset_statistics()
+
+            stat_table = {
+                "kills": {"solo_kills": 0, "total_kills": 0, "data": {}},
+                "deaths": {
+                    "solo_deaths": solo_deaths,
+                    "total_deaths": 15,
+                    "data": {0: 0, 1: single_champ_solo_deaths},
+                    "has_max_deaths": True,
+                },
+                "champions": {1: "MasterLi", 0: "AnotherBitch"},
+                "winner": {"user": False, "team": 100},
+            }
+
+            mock_get_stat.side_effect = lambda x: stat_table[x]
+
             user = LoLUser(mock_discord_id(), "useless")
             handle_lol_loss(
-                lol_match_data,
                 user,
                 [LoLText("p", "prefix", 1234)],
                 [LoLText("sp", "stat_prefix", 1234)],
@@ -97,7 +78,7 @@ def test_handle_lol_loss_hard_inted(mock_send_discord_message):
     )
 
 
-@handle_lol_loss_helper(solo_killed=10)
+@handle_lol_loss_helper(solo_deaths=10)
 def test_handle_lol_loss_hard_inted_all(mock_send_discord_message):
     """
     Tests that the function handle lol loss works correctly
@@ -110,7 +91,7 @@ def test_handle_lol_loss_hard_inted_all(mock_send_discord_message):
     )
 
 
-@handle_lol_loss_helper(solo_killed=5, single_champ_solo_deaths=2)
+@handle_lol_loss_helper(solo_deaths=5, single_champ_solo_deaths=2)
 def test_handle_lol_loss_solo_deaths_gt_solo_kills(mock_send_discord_message):
     """
     Tests that the function handle lol loss works correctly
@@ -123,7 +104,7 @@ def test_handle_lol_loss_solo_deaths_gt_solo_kills(mock_send_discord_message):
     )
 
 
-@handle_lol_loss_helper(solo_killed=0, single_champ_solo_deaths=0)
+@handle_lol_loss_helper(solo_deaths=0, single_champ_solo_deaths=0)
 def test_handle_lol_loss_solo_deaths_lt_solo_kills(mock_send_discord_message):
     """
     Tests that the function handle lol loss works correctly

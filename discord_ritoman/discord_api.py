@@ -1,7 +1,7 @@
 import os
 import requests
 
-from discord_ritoman.utils import create_logger, dynamic_import_class
+from discord_ritoman.utils import create_logger
 
 
 logger = create_logger(__file__)

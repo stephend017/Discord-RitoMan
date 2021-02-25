@@ -1,10 +1,6 @@
-from discord_ritoman.utils import create_logger
 from sqlalchemy import inspect
 
 from discord_ritoman.db.session import config_name, postgresql_engine
-
-
-logger = create_logger(__file__)
 
 
 def test_correct_config_used():

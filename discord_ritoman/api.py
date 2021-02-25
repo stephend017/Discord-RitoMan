@@ -1,3 +1,8 @@
+from discord_ritoman.lol.stats.match_stat import (
+    get_stat,
+    reset_statistics,
+    set_lol_data_context,
+)
 from discord_ritoman.db.schema import LoLText, LoLUser
 from discord_ritoman.db.accessors import (
     get_all_lol_users,
@@ -18,14 +23,13 @@ from discord_ritoman.lol_api import (
     get_match_data,
     get_match_timeline,
 )
-from discord_ritoman.lol_match_data import LoLMatchData
+
 import random
 
 logger = create_logger(__file__)
 
 
 def handle_lol_loss(
-    data: LoLMatchData,
     user: LoLUser,
     prefixes: List[LoLText],
     stat_prefixes_01: List[LoLText],
@@ -33,62 +37,66 @@ def handle_lol_loss(
     champion: str,
 ):
     """"""
-    logger.info("HANDLING LOL LOSS")
-    solo_kills: int = data.get_solo_kills()
-    solo_deaths: int = data.get_solo_killed()
-    kills, deaths = data.get_feeding_data()
 
-    logger.info("LOADED LOL LOSS DATA")
+    kills = get_stat("kills")
+    deaths = get_stat("deaths")
+    champions = get_stat("champions")
 
-    total_deaths = data.get_total_deaths()
+    # solo_kills: int = data.get_solo_kills()
+    # solo_deaths: int = data.get_solo_deaths()
+    # kills, deaths = data.get_feeding_data()
+
+    # total_deaths = data.get_total_deaths()
+
     max_solo_deaths_to_champ = 0
     champ = 0
-    for key, value in deaths.items():
+    for key, value in deaths["data"].items():
         if value > max_solo_deaths_to_champ:
             champ = key
             max_solo_deaths_to_champ = value
 
     try:
         if (
-            max_solo_deaths_to_champ >= total_deaths / 2
-            and data.has_max_team_deaths()
+            # max_solo_deaths_to_champ >= total_deaths / 2
+            max_solo_deaths_to_champ >= deaths["total_deaths"] / 2
+            and deaths["has_max_deaths"]
         ):
             # message = f"well well well, dinner has been served because <@{user_info[2]}> fed the absolute shit out of {data.get_champion_name_from_pariticpant_id(champ)} giving them "
-            message = f"well well well, dinner has been served because <@{user.discord_id}> fed the absolute shit out of {data.get_champion_name_from_pariticpant_id(champ)} giving them "
+            message = f"well well well, dinner has been served because <@{user.discord_id}> fed the absolute shit out of {champions[champ]} giving them "
 
-            if max_solo_deaths_to_champ == solo_deaths:
+            # if max_solo_deaths_to_champ == solo_deaths:
+            if max_solo_deaths_to_champ == deaths["solo_deaths"]:
                 message += (
                     f"all {max_solo_deaths_to_champ} of their solo deaths"
                 )
             else:
-                message += f"{max_solo_deaths_to_champ} / {solo_deaths} of their solo deaths"
+                # message += f"{max_solo_deaths_to_champ} / {solo_deaths} of their solo deaths"
+                message += f"{max_solo_deaths_to_champ} / {deaths['solo_deaths']} of their solo deaths"
 
             send_discord_message(message, True)
-        elif solo_kills < solo_deaths:
+        # elif solo_kills < solo_deaths:
+        elif kills["solo_kills"] < deaths["solo_deaths"]:
             prefix_index: int = random.randint(0, len(prefixes) - 1)
             stat_prefix_01_index: int = random.randint(
                 0, len(stat_prefixes_01) - 1
             )
             suffix_index: int = random.randint(0, len(suffixes) - 1)
             send_discord_message(
-                # f"{prefixes[prefix_index][0]} <@{user_info[2]}> {stat_prefixes_01[stat_prefix_01_index][0]} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index][0]}"
-                f"{prefixes[prefix_index].content} <@{user.discord_id}> {stat_prefixes_01[stat_prefix_01_index].content} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index].content}",
+                # f"{prefixes[prefix_index].content} <@{user.discord_id}> {stat_prefixes_01[stat_prefix_01_index].content} {solo_deaths} solo deaths and only {solo_kills} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index].content}",
+                f"{prefixes[prefix_index].content} <@{user.discord_id}> {stat_prefixes_01[stat_prefix_01_index].content} {deaths['solo_deaths']} solo deaths and only {kills['solo_kills']} solo kills as {champion} in their latest defeat in league of legends. {suffixes[suffix_index].content}",
                 True,
             )
         else:
             send_discord_message(
-                # f"<@{user_info[2]}> got fucking trolled in their last game of league of legends. unlucky m8"
                 f"<@{user.discord_id}> got fucking trolled in their last game of league of legends. unlucky m8"
             )
     except Exception as error:
         logger.critical(error)
 
-    logger.info("FINISHED PROCESSING LOL LOSS DATA")
-
 
 def handle_lol_match(
-    match,
-    account_id,
+    match: LoLMatchMetadata,
+    account_id: str,
     user: LoLUser,
     timestamp,
     prefixes: List[LoLText],
@@ -108,18 +116,22 @@ def handle_lol_match(
         )
         return
 
-    logger.info("starting to load match data")
+    # data = LoLMatchData(match_data, match_timeline, account_id)
+    set_lol_data_context(match_data, match_timeline, account_id)
+    reset_statistics()
 
-    data = LoLMatchData(match_data, match_timeline, account_id)
     champion = match.get_champion_name()
-
-    logger.info("successfully loaded match data")
 
     # check if the user lost and had less solo kills
     # than solo deaths
-    if not data.did_account_win(account_id):
+    if not get_stat("winners")["user"]:
         handle_lol_loss(
-            data, user, prefixes, stat_prefixes_01, suffixes, champion,
+            # data,
+            user,
+            prefixes,
+            stat_prefixes_01,
+            suffixes,
+            champion,
         )
         if user.winrate:
             update_lol_user_winrate(user, GameResult.LOSS)
@@ -127,10 +139,9 @@ def handle_lol_match(
         if user.winrate:
             update_lol_user_winrate(user, GameResult.WIN)
 
-    match_end = data.get_match_end()
+    match_end = get_stat("match_end")
     logger.info(f"{match_end} > {timestamp}")
     if match_end > timestamp:
-        # set_last_recorded_time(user_info[0], data.get_match_end())
         update_lol_user_last_updated(user, match_end)
 
 
@@ -139,7 +150,6 @@ def run_lol():
     This is the function that updates and sends messages
     to the discord server for every bad game
     """
-    logger.info("Starting lol run")
     users: List[LoLUser] = get_all_lol_users()
     prefixes: List[LoLText] = get_lol_text_by_group("p0")
     stat_prefixes_01: List[LoLText] = get_lol_text_by_group("sp0")
@@ -184,8 +194,6 @@ def dump_lol_winrate():
     for everyone who played that day
     """
 
-    logger.info("starting winrate dump")
-    # users = get_all_lol_users_winrate()
     users: List[LoLUser] = get_lol_users_with_winrate_enabled()
 
     send_discord_message(
