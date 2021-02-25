@@ -14,6 +14,7 @@ def test_bot(mock_logger, mock_os):
     with pytest.raises(discord.errors.LoginFailure):
         main()
     all_commands = mock_logger.info.call_args[0][0]
-    assert "denounce" in all_commands
-    assert "testcommand" in all_commands
-    assert "winrate" in all_commands
+    for command in discord_ritoman.bot.__all__:
+        if command == "bot_command":
+            continue
+        assert command.replace("_", "") in all_commands
