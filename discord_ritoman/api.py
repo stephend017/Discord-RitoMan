@@ -33,12 +33,9 @@ def handle_lol_loss(
     champion: str,
 ):
     """"""
-    logger.info("HANDLING LOL LOSS")
     solo_kills: int = data.get_solo_kills()
     solo_deaths: int = data.get_solo_killed()
     kills, deaths = data.get_feeding_data()
-
-    logger.info("LOADED LOL LOSS DATA")
 
     total_deaths = data.get_total_deaths()
     max_solo_deaths_to_champ = 0
@@ -83,8 +80,6 @@ def handle_lol_loss(
     except Exception as error:
         logger.critical(error)
 
-    logger.info("FINISHED PROCESSING LOL LOSS DATA")
-
 
 def handle_lol_match(
     match,
@@ -108,12 +103,8 @@ def handle_lol_match(
         )
         return
 
-    logger.info("starting to load match data")
-
     data = LoLMatchData(match_data, match_timeline, account_id)
     champion = match.get_champion_name()
-
-    logger.info("successfully loaded match data")
 
     # check if the user lost and had less solo kills
     # than solo deaths
@@ -139,7 +130,6 @@ def run_lol():
     This is the function that updates and sends messages
     to the discord server for every bad game
     """
-    logger.info("Starting lol run")
     users: List[LoLUser] = get_all_lol_users()
     prefixes: List[LoLText] = get_lol_text_by_group("p0")
     stat_prefixes_01: List[LoLText] = get_lol_text_by_group("sp0")
@@ -184,8 +174,6 @@ def dump_lol_winrate():
     for everyone who played that day
     """
 
-    logger.info("starting winrate dump")
-    # users = get_all_lol_users_winrate()
     users: List[LoLUser] = get_lol_users_with_winrate_enabled()
 
     send_discord_message(
