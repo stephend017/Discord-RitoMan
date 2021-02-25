@@ -9,8 +9,8 @@ from unittest import mock
 from tests.mock.discord_mocks import mock_discord_bot, mock_discord_user
 from tests.helpers import discord_ctx_mock
 
-import discord_ritoman.bot.bot
-from discord_ritoman.bot.bot import winrate
+import discord_ritoman.bot.winrate
+from discord_ritoman.bot.winrate import WinrateCommand
 
 
 def lol_user_discord_id() -> int:
@@ -61,7 +61,7 @@ def winrate_test_helper(
 ):
     def decorator(func):
         @pytest.mark.asyncio
-        @mock.patch.object(discord_ritoman.bot.bot, "bot")
+        @mock.patch.object(discord_ritoman.bot.winrate, "bot")
         async def wrapper(mock_bot):
             ctx = discord_ctx_mock()
             user = None
@@ -89,7 +89,7 @@ def winrate_test_helper(
 
             discord_id = user.discord_id if user else 0
             # call actual function with everything mocked above
-            await winrate(ctx, option, f"<@!{discord_id}>")
+            await WinrateCommand(ctx, option, f"<@!{discord_id}>")
 
             # validate function
             func(ctx, user, discord_user.name)
