@@ -14,4 +14,6 @@ class ParticipantIdsStat(LoLMatchStat):
             participant_ids[participant["player"]["accountId"]] = participant[
                 "participantId"
             ]
+            if participant["player"]["accountId"] == account_id:
+                participant_ids["user"] = participant["participantId"]
         return participant_ids

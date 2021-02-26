@@ -44,3 +44,10 @@ def mock_discord_bot(mock_bot, fetch_user_result=[NotFound]):
     """
     mock_bot.fetch_user = AsyncMock()
     mock_bot.fetch_user.side_effect = fetch_user_result
+
+
+def mock_discord_id() -> int:
+    """
+    Returns a mock discord id for testing
+    """
+    return 383854815186518016
