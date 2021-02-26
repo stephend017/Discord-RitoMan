@@ -124,7 +124,7 @@ def handle_lol_match(
 
     # check if the user lost and had less solo kills
     # than solo deaths
-    if not get_stat("winners")["user"]:
+    if not get_stat("winner")["user"]:
         handle_lol_loss(
             # data,
             user,
