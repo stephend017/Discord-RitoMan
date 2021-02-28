@@ -17,11 +17,11 @@ def run_poll_lol_api(
     with_logging_calls: Dict[Any, Any] = {},
 ):
     def decorator(func):
-        @mock.patch.object(discord_ritoman.api, "run_end_of_day")
+        @mock.patch.object(discord_ritoman.api, "run_end_of_game")
         @mock.patch.object(discord_ritoman.api, "with_logging")
         @mock.patch.object(discord_ritoman.api, "get_all_lol_users")
         def wrapper(
-            mock_get_all_lol_users, mock_with_logging, mock_run_end_of_day
+            mock_get_all_lol_users, mock_with_logging, mock_run_end_of_game
         ):
             def with_logging_handler(
                 func, logger, log_message, default, **kwargs
@@ -33,7 +33,7 @@ def run_poll_lol_api(
             mock_with_logging.side_effect = with_logging_handler
 
             poll_lol_api()
-            func(mock_run_end_of_day, users)
+            func(mock_run_end_of_game, users)
 
         return wrapper
 
