@@ -1,16 +1,16 @@
 import schedule
-from discord_ritoman.api import dump_lol_winrate, run_lol
+from discord_ritoman.api import poll_lol_api, run_end_of_day
 import time
 
 
 def main():
     """"""
-    schedule.every(5).minutes.do(run_lol)
+    schedule.every(5).minutes.do(poll_lol_api)
 
-    schedule.every().days.at("00:00:00").do(dump_lol_winrate)
+    schedule.every().days.at("12:00:00").do(run_end_of_day)
 
     # run initially
-    run_lol()
+    poll_lol_api()
 
     while True:
         schedule.run_pending()

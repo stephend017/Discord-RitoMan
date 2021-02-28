@@ -94,3 +94,18 @@ def get_db_uri(
         str: the full db uri
     """
     return f"{db_type}://{user}:{password}@{host}:{port}/{db_name}"
+
+
+def with_logging(
+    func,
+    logger: logging.Logger,
+    log_message: str = "Function failed",
+    default: Any = None,
+    **kwargs,
+) -> Any:
+    """"""
+    try:
+        return func(**kwargs)
+    except Exception:
+        logger.error(log_message)
+        return default
