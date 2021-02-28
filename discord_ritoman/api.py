@@ -47,7 +47,7 @@ def run_end_of_game(
     set_lol_data_context(match_data, match_timeline, account_id)
     reset_statistics()
     run_lol_rules(LoLRuleType.GAME_END, user)
-
+    
 
 def poll_lol_api():
     """
