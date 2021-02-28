@@ -2,14 +2,16 @@ from discord_ritoman.db.accessors import get_lol_text_by_group
 from discord_ritoman.discord_api import send_discord_message
 import random
 from discord_ritoman.lol.stats.match_stat import get_stat
-from typing import Dict, List
+from typing import Dict, List, Union
 from discord_ritoman.db.schema import LoLText, LoLUser
 from discord_ritoman.lol.rules.lol_rule import lol_rule, LoLRuleType, LoLRule
 
 
 @lol_rule("inted", LoLRuleType.GAME_END, run_after=["hard_inted"])
 class IntedRule(LoLRule):
-    def should_run(self, results: Dict[str, bool], user: LoLUser) -> bool:
+    def should_run(
+        self, results: Dict[str, bool], user: Union[LoLUser, None] = None
+    ) -> bool:
         if get_stat("winner")["user"]:
             return False
 
@@ -22,7 +24,7 @@ class IntedRule(LoLRule):
 
         return kills["solo_kills"] < deaths["solo_deaths"]
 
-    def run(self, results: Dict[str, bool], user: LoLUser):
+    def run(self, results: Dict[str, bool], user: Union[LoLUser, None] = None):
         kills = get_stat("kills")
         deaths = get_stat("deaths")
         champions = get_stat("champions")

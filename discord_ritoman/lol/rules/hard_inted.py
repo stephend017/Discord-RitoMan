@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Union
 from discord_ritoman.discord_api import send_discord_message
 from discord_ritoman.db.schema import LoLUser
 from discord_ritoman.lol.rules.lol_rule import LoLRule, LoLRuleType, lol_rule
@@ -9,7 +9,9 @@ from discord_ritoman.lol.stats.match_stat import get_stat
 class HardIntedRule(LoLRule):
     """"""
 
-    def should_run(self, results: Dict[str, bool], user: LoLUser) -> bool:
+    def should_run(
+        self, results: Dict[str, bool], user: Union[LoLUser, None] = None
+    ) -> bool:
         """"""
         if get_stat("winner")["user"]:
             # user won game, cant have inted
@@ -23,7 +25,7 @@ class HardIntedRule(LoLRule):
             and deaths["has_max_deaths"]
         )
 
-    def run(self, results: Dict[str, bool], user: LoLUser):
+    def run(self, results: Dict[str, bool], user: Union[LoLUser, None] = None):
         deaths = get_stat("deaths")
         champions = get_stat("champions")
 
