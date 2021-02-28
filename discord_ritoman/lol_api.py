@@ -92,8 +92,23 @@ def get_account_id(puuid: str) -> str:
     return riot_api_get(url)["accountId"]
 
 
-def get_matches(account_id: str, start_timestamp: int):
-    """"""
+def get_matches(
+    account_id: str, start_timestamp: int
+) -> List[LoLMatchMetadata]:
+    """
+    Returns all the matches for a given account Id after the specified timestamp
+
+    If no matches are found (404) then this function returns an empty list
+
+    Args:
+        account_id (str): the riot puuid of the account
+        start_timestamp (int): the timestamp in ms since the epoch
+            from when to start looking for matches
+
+    Returns:
+        List[LoLMatchMetadata]: all the matches found from the user after the
+            given timestamp
+    """
     url = f"https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/{account_id}?beginTime={start_timestamp}"
     response = riot_api_get(
         url,

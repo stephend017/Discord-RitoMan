@@ -5,7 +5,7 @@ from discord_ritoman.lol.stats.match_stat import (
 )
 from discord_ritoman.db.schema import LoLUser
 from discord_ritoman.db.accessors import get_all_lol_users
-from discord_ritoman.utils import create_logger
+from discord_ritoman.utils import create_logger, with_logging
 from typing import Any, Dict, List
 from discord_ritoman.lol_match_metadata import LoLMatchMetadata
 from discord_ritoman.lol_api import (
@@ -18,35 +18,41 @@ from discord_ritoman.lol_api import (
 logger = create_logger(__file__)
 
 
-def handle_lol_match(
-    match: LoLMatchMetadata, account_id: str, user: LoLUser,
+def run_end_of_day():
+    """
+    Runs all the rules that have been defined to run at the end of the day
+
+    See `discord_ritoman.lol.rules` for more info
+    """
+    run_lol_rules(LoLRuleType.END_OF_DAY)
+
+
+def run_end_of_game(
+    user: LoLUser,
+    match_data: Dict[str, Any],
+    match_timeline: Dict[str, Any],
+    account_id: str,
 ):
-    """"""
-    match_data: Dict[str, Any] = {}
-    match_timeline: Dict[str, Any] = {}
+    """
+    Runs all the rules that have been defined to run at the end of each game
 
-    try:
-        match_data = get_match_data(match.game_id)
-        match_timeline = get_match_timeline(match.game_id)
-    except Exception:
-        logger.error(
-            "There was an error retrieving match data, skipping this iteration"
-        )
-        return
-
+    Args:
+        user (LoLUser): the user who's game ended
+        match_data (Dict[str, Any]): the match data from the users game
+            that ended
+        match_timeline (Dict[str, Any]): the match timeline from the
+            users game that ended
+        account_id (str): the RIOT account id of the user
+    """
     set_lol_data_context(match_data, match_timeline, account_id)
     reset_statistics()
-
-    # check if the user lost and had less solo kills
-    # than solo deaths
-
     run_lol_rules(LoLRuleType.GAME_END, user)
 
 
-def run_lol():
+def poll_lol_api():
     """
-    This is the function that updates and sends messages
-    to the discord server for every bad game
+    Function that polls the LoL API checking for games
+    that have ended for each user
     """
     users: List[LoLUser] = get_all_lol_users()
 
@@ -54,31 +60,44 @@ def run_lol():
         account_id: str = ""
         matches: List[LoLMatchMetadata] = []
 
-        try:
-            account_id = get_account_id(user.riot_puuid)
-        except Exception:
-            logger.error(
-                "There was an error retrieving account data, skipping this iteration"
-            )
+        account_id = with_logging(
+            get_account_id,
+            logger,
+            f"Failed to get account id for user=[{user.riot_puuid}]",
+            None,
+            puuid=user.riot_puuid,
+        )
+
+        if account_id is None:
             continue
 
-        try:
-            matches = get_matches(account_id, user.last_updated)
-        except Exception:
-            logger.error(
-                f"There was an error retrieving matches for account [{user.discord_id}], skipping this iteration"
-            )
-            continue
+        matches: List[LoLMatchMetadata] = with_logging(
+            get_matches,
+            logger,
+            f"Failed to get matches for user=[{user.discord_id}]",
+            [],
+            account_id=account_id,
+            start_timestamp=user.last_updated,
+        )
 
         for match in matches:
-            handle_lol_match(
-                match, account_id, user,
+            match_data = with_logging(
+                get_match_data,
+                logger,
+                f"Failed to get match data for match=[{match.game_id}]",
+                None,
+                match_id=match.game_id,
             )
 
+            match_timeline = with_logging(
+                get_match_timeline,
+                logger,
+                f"Failed to get match timeline for match=[{match.game_id}]",
+                None,
+                match_id=match.game_id,
+            )
 
-def dump_lol_winrate():
-    """
-    sends a discord message at 7 PM EST with the winrate
-    for everyone who played that day
-    """
-    run_lol_rules(LoLRuleType.END_OF_DAY)
+            if match_data is None or match_timeline is None:
+                continue
+
+            run_end_of_day(user, match_data, match_timeline, account_id)
