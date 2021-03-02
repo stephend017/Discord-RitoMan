@@ -13,6 +13,11 @@ class TeamStat(LoLMatchStat):
     def process(
         self, data: Dict[str, Any], timeline: Dict[str, Any], account_id: str,
     ) -> Any:
-        return data["participants"][get_stat("participant_ids")[account_id]][
-            "teamId"
-        ]
+
+        for participant in data["participants"]:
+            if (
+                participant["participantId"]
+                == get_stat("participant_ids")[account_id]
+            ):
+                return participant["teamId"]
+        return None
