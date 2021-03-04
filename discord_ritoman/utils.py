@@ -8,7 +8,18 @@ from typing import Any
 epoch = datetime.datetime.utcfromtimestamp(0)
 
 
-def unix_time_millis(dt):
+def unix_time_millis(dt: float) -> float:
+    """
+    Returns the number of ms since the EPOCH
+
+    Args:
+        dt (float): The timestamp to convert in
+        seconds. This can be derived from
+        `datetime.datetime.now()`
+
+    Returns:
+        float: The time in ms since the epoch
+    """
     return (dt - epoch).total_seconds() * 1000.0
 
 
@@ -103,7 +114,10 @@ def with_logging(
     default: Any = None,
     **kwargs,
 ) -> Any:
-    """"""
+    """
+    Runs a specified function within a try catch block and
+    logs an errors.
+    """
     try:
         return func(**kwargs)
     except Exception:

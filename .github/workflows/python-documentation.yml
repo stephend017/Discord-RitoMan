@@ -3,8 +3,6 @@ name: Python package
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -26,6 +24,6 @@ jobs:
         ./scripts/cleanup_env.sh
         chmod +x ./scripts/setup_env.sh
         ./scripts/setup_env.sh
-        chmod +x ./scripts/run_tests.sh
-        ./scripts/run_tests.sh
+        chmod +x ./scripts/publish_docs.sh
+        ./scripts/publish_docs.sh
         ./scripts/cleanup_env.sh

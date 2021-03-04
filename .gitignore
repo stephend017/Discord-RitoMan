@@ -133,3 +133,7 @@ dmypy.json
 
 # for ci/cd
 deploy.env
+
+
+# submodule
+wiki/
