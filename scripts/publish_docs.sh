@@ -7,8 +7,7 @@ WIKI_FOLDER="wiki"
 WIKI_REPO="https://github.com/stephend017/discord_ritoman.wiki.git"
 
 GH_TOKEN=$1
-GH_ACTOR=$2
-GH_REF=$3
+GH_DOCS_PAT=$2
 
 # setup wiki repo
 if [[ ! -d "./$WIKI_FOLDER" ]]; then
@@ -16,7 +15,7 @@ if [[ ! -d "./$WIKI_FOLDER" ]]; then
 fi
 
 git submodule update "$WIKI_FOLDER"
-git remote add github "https://$GH_ACTOR:$GH_TOKEN@github.com/stephend017/discord_ritoman.wiki.git"
+git remote add github "https://$GH_DOCS_PAT@github.com/stephend017/discord_ritoman.wiki.git"
 
 env/bin/pydoc-markdown -I . -m "$DOC_SOURCE" '{
     renderer: {
