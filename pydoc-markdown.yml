@@ -1,0 +1,41 @@
+loaders:
+  - type: python
+processors:
+  - type: filter
+    documented_only: true
+  - type: smart
+  - type: crossref
+renderer:
+  type: hugo
+  config:
+    title: Discord Ritoman
+    theme: {clone_url: "https://github.com/alex-shpak/hugo-book.git"}
+    baseURL: '..'
+  # The "book" theme only renders pages in "content/docs" into the nav.
+  content_directory: content/docs
+  default_preamble: {menu: main}
+  pages:
+    - title: Home
+      name: index
+      source: README.md
+      directory: '..'
+    - title: API Documentation
+      contents:
+        - 'discord_ritoman.api.*'
+      children:
+        - title: Utils
+          contents:
+            - 'discord_ritoman.utils'
+            - 'discord_ritoman.utils.*'
+        - title: Bot Commands
+          contents:
+            - 'discord_ritoman.bot'
+            - 'discord_ritoman.bot.*'
+        - title: Stats
+          contents:
+            - 'discord_ritoman.lol.stats'
+            - 'discord_ritoman.lol.stats.*'
+        - title: Rules
+          contents:
+            - 'discord_ritoman.lol.rules'
+            - 'discord_ritoman.lol.rules.*'
