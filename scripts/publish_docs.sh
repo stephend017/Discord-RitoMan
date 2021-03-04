@@ -16,7 +16,7 @@ if [[ ! -d "./$WIKI_FOLDER" ]]; then
 fi
 
 git submodule update "$WIKI_FOLDER"
-git remote add github "https://$GH_ACTOR:$GH_TOKEN@github.com/discord_ritoman.wiki.git"
+git remote add github "https://$GH_ACTOR:$GH_TOKEN@github.com/stephend017/discord_ritoman.wiki.git"
 git pull github "$GH_REF" --ff-only
 
 env/bin/pydoc-markdown -I . -m "$DOC_SOURCE" '{
