@@ -6,6 +6,8 @@ DOC_SOURCE="discord_ritoman.utils"
 WIKI_FOLDER="wiki"
 WIKI_REPO="https://github.com/stephend017/discord_ritoman.wiki.git"
 
+GH_TOKEN=$1
+
 # setup wiki repo
 if [[ ! -d "./$WIKI_FOLDER" ]]; then
     git clone "$WIKI_REPO" "$WIKI_FOLDER"
@@ -31,4 +33,4 @@ cd "$WIKI_FOLDER"
 git checkout master
 git add "./$DOC_NAME.md"
 git commit -m "Updated Documentation"
-git push
+git push "https://$GH_TOKEN@github.com/stephend017/discord_ritoman.wiki.git"
