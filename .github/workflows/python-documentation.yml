@@ -25,5 +25,5 @@ jobs:
         chmod +x ./scripts/setup_env.sh
         ./scripts/setup_env.sh
         chmod +x ./scripts/publish_docs.sh
-        ./scripts/publish_docs.sh ${{ secrets.GITHUB_TOKEN }} $GITHUB_ACTOR
+        ./scripts/publish_docs.sh ${{ secrets.GITHUB_TOKEN }} $GITHUB_ACTOR $GITHUB_REF
         ./scripts/cleanup_env.sh
