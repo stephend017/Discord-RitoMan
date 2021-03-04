@@ -17,7 +17,6 @@ fi
 
 git submodule update "$WIKI_FOLDER"
 git remote add github "https://$GH_ACTOR:$GH_TOKEN@github.com/stephend017/discord_ritoman.wiki.git"
-git pull github "$GH_REF" --ff-only
 
 env/bin/pydoc-markdown -I . -m "$DOC_SOURCE" '{
     renderer: {
@@ -40,5 +39,5 @@ git checkout master
 git add "./$DOC_NAME.md"
 git commit -m "Updated Documentation"
 
-git push github "HEAD:$GH_REF"
+git push github 
 # git push "https://$GH_TOKEN@github.com/stephend017/discord_ritoman.wiki.git"
