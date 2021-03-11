@@ -1,0 +1,16 @@
+name: Publish Docs
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+        # Put your action repo here
+        - uses: stephend017/ghapd@main
+          with:
+            owner_name: 'stephend017'
+            repository_name: 'discord_ritoman'
+            personal_access_token: ${{ secrets.GITHUB_TOKEN }}
