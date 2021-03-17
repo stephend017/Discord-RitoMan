@@ -1,5 +1,8 @@
 {
-  "sources": ["discord_ritoman/api.py"],
+  "sources": [
+    "discord_ritoman/api.py",
+    "discord_ritoman/lol/stats/"
+  ],
   "title_prefix": "RITOMAN_",
   "title_suffix": "_API",
   "titles": [
