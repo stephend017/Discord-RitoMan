@@ -1,10 +1,10 @@
 {
-  "sources": ["discord_ritoman/api"],
+  "sources": ["discord_ritoman/api.py"],
   "title_prefix": "RITOMAN_",
   "title_suffix": "_API",
   "titles": [
     {
-      "source": "discord_ritoman/api",
+      "source": "discord_ritoman/api.py",
       "title": "REAL_API"
     }
   ]
