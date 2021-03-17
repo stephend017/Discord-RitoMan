@@ -1,5 +1,5 @@
 {
-  "sources": ["discord_ritoman/"],
+  "sources": ["discord_ritoman/api"],
   "title_prefix": "RITOMAN_",
   "title_suffix": "_API",
   "titles": [
