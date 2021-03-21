@@ -9,6 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         # Put your action repo here
-        - uses: stephend017/ghapd@main
+        - uses: stephend017/pencil-pusher@main
           with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
