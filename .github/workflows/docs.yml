@@ -11,6 +11,4 @@ jobs:
         # Put your action repo here
         - uses: stephend017/ghapd@main
           with:
-            owner_name: 'stephend017'
-            repository_name: 'discord_ritoman'
-            personal_access_token: ${{ secrets.GITHUB_TOKEN }}
+            github_token: ${{ secrets.GITHUB_TOKEN }}
