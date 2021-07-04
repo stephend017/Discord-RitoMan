@@ -8,7 +8,7 @@ from typing import Any
 epoch = datetime.datetime.utcfromtimestamp(0)
 
 
-def unix_time_millis(dt: float) -> float:
+def unix_time_millis(dt: datetime.datetime) -> float:
     """
     Returns the number of ms since the EPOCH
 
@@ -46,7 +46,7 @@ def create_logger(path: str) -> logging.Logger:
         maxBytes=5 * 1024 * 1024,
         backupCount=2,
         encoding=None,
-        delay=0,
+        delay=False,
     )
     my_handler.setFormatter(log_formatter)
     my_handler.setLevel(logging.INFO)
@@ -108,11 +108,11 @@ def get_db_uri(
 
 
 def with_logging(
-    func,
+    func: Any,
     logger: logging.Logger,
     log_message: str = "Function failed",
     default: Any = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Any:
     """
     Runs a specified function within a try catch block and

@@ -4,12 +4,20 @@ from discord_ritoman.lol.stats.match_stat import (
     set_lol_data_context,
 )
 from discord_ritoman.db.schema import LoLUser
-from discord_ritoman.db.accessors import get_all_lol_users
+from discord_ritoman.db.accessors import (
+    add_lol_game,
+    get_all_active_games,
+    get_all_lol_users,
+)
 from discord_ritoman.utils import create_logger, with_logging
 from typing import Any, Dict, List
-from discord_ritoman.lol_match_metadata import LoLMatchMetadata
+from discord_ritoman.lol_match_metadata import (
+    LoLMatchMetadata,
+    LoLMatchStartData,
+)
 from discord_ritoman.lol_api import (
     get_account_id,
+    get_active_game,
     get_matches,
     get_match_data,
     get_match_timeline,
@@ -49,7 +57,7 @@ def run_end_of_game(
     run_lol_rules(LoLRuleType.GAME_END, user)
 
 
-def poll_lol_api():
+def _poll_game_end():
     """
     Function that polls the LoL API checking for games
     that have ended for each user
@@ -101,3 +109,69 @@ def poll_lol_api():
                 continue
 
             run_end_of_game(user, match_data, match_timeline, account_id)
+
+
+def _poll_game_start():
+    """
+    Function that polls the LoL API checking for games
+    that have started for each user
+    """
+    users: List[LoLUser] = get_all_lol_users()
+    active_games = get_all_active_games()
+
+    for user in users:
+        account_id: str = ""
+        account_id = with_logging(
+            get_account_id,
+            logger,
+            f"Failed to get account id for user=[{user.riot_puuid}]",
+            None,
+            puuid=user.riot_puuid,
+        )
+
+        if account_id is None:
+            continue
+
+        game: LoLMatchStartData = with_logging(
+            get_active_game,
+            logger,
+            f"Failed to get matches for user=[{user.discord_id}]",
+            [],
+            account_id=account_id,
+            start_timestamp=user.last_updated,
+        )
+
+        if (
+            len(
+                list(filter(lambda x: x.game_id == game.game_id, active_games))
+            )
+            > 0
+        ):
+            # game_id already exists
+            if (
+                len(
+                    list(
+                        filter(
+                            lambda x: x.player == user.discord_id, active_games
+                        )
+                    )
+                )
+                > 0
+            ):
+                # player already exists
+                continue
+
+        # player or game does not exist, create new entry
+        add_lol_game(user, game.game_id, game.start_time, game.game_mode)
+
+        run_lol_rules(LoLRuleType.GAME_START, user)
+
+
+def poll_lol_api():
+    """
+    This function polls for 2 different events
+    - Game ending
+    - Game starting
+    """
+    _poll_game_end()
+    _poll_game_start()

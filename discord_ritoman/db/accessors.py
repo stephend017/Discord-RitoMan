@@ -1,12 +1,18 @@
 """
 This class is where all database accessor functions will be defined
 """
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy.orm.exc import NoResultFound
 
 from discord_ritoman.models import GameResult
-from discord_ritoman.db.schema import LoLText, LoLTextGroup, LoLUser
+from discord_ritoman.db.schema import (
+    LoLActiveGames,
+    LoLBets,
+    LoLText,
+    LoLTextGroup,
+    LoLUser,
+)
 from discord_ritoman.db.session import session
 
 
@@ -83,6 +89,84 @@ def set_lol_user_winrate(user: LoLUser, value: bool):
     session.commit()
 
 
+def add_lol_user_points(user: LoLUser, points: int):
+    """
+    Adds points to a given user
+    """
+    session.query(LoLUser).filter(
+        LoLUser.discord_id == user.discord_id
+    ).update({"points": user.points + points})
+    session.commit()
+
+
+def add_lol_game(user: LoLUser, game_id: int, start_time: int, game_mode: str):
+    """
+    Adds an active lol game to the db
+    """
+    active_game = LoLActiveGames(
+        game_id, user.discord_id, start_time, game_mode
+    )
+    session.add(active_game)
+    session.commit()
+
+
+def remove_lol_game(game_id: int, player_id: int):
+    """
+    Removes an active lol game from the db
+    """
+    session.query(LoLActiveGames).filter(
+        LoLActiveGames.game_id == game_id
+        and LoLActiveGames.player == player_id
+    ).delete()
+    session.commit()
+
+
+def get_all_active_games():
+    """
+    Gets all the active games for all
+    active discord ritoman users
+    """
+    return session.query(LoLActiveGames).all()
+
+
+def get_all_active_bets():
+    """
+    Gets all the active bets for all
+    active discord ritoman users
+    """
+    return session.query(LoLBets).all()
+
+
+def get_betters_on(user: LoLUser):
+    """
+    Gets all active bets on a given user
+    """
+    return (
+        session.query(LoLBets).filter(LoLBets.player == user.discord_id).all()
+    )
+
+
+def create_bet(
+    player: int, better: int, bet: int, prediction: bool, game_id: int
+):
+    """
+    creates a new bet on a player
+    """
+    bet = LoLBets(player, better, bet, prediction, game_id)
+    session.add(bet)
+    session.commit()
+
+
+def remove_bet(bet: LoLBets):
+    """
+    removes an active bet (marked as completed)
+    """
+    session.query(LoLBets).filter(
+        LoLBets.player == bet.player and LoLBets.better == bet.better
+    ).delete()
+    session.commit()
+
+
 def get_lol_users_with_winrate_enabled() -> List[LoLUser]:
     """
     Returns all users who currently have winrate enabled
@@ -107,7 +191,7 @@ def create_new_lol_user(discord_id: int, riot_puuid: str):
     session.commit()
 
 
-def get_lol_user_by_discord_id(discord_id: int) -> LoLUser:
+def get_lol_user_by_discord_id(discord_id: int) -> Optional[LoLUser]:
     """
     Returns the LoL user with the given discord id
 

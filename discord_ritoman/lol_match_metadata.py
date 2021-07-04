@@ -1,4 +1,4 @@
-from fastcore.utils import store_attr
+from typing import Any
 import json
 
 
@@ -8,7 +8,9 @@ class LoLMatchMetadata:
     """
 
     def __init__(self, game_id: int, champion: int, timestamp: int):
-        store_attr()
+        self.game_id = game_id
+        self.champion = champion
+        self.timestamp = timestamp
 
     def __str__(self) -> str:
         """"""
@@ -18,7 +20,7 @@ class LoLMatchMetadata:
         """"""
         return f"<{self.__class__.__name__} {[f'{key}={value}' for key, value in self.__dict__.items()]}>"
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if type(other) != type(self):
             return False
 
@@ -36,3 +38,14 @@ class LoLMatchMetadata:
                 if int(champion_data["key"]) == self.champion:
                     return champion_name
         raise Exception(f"Unable to find champion with key={self.champion}")
+
+
+class LoLMatchStartData:
+    """
+    This class represents a league of legends match start
+    """
+
+    def __init__(self, game_id: int, game_mode: str, start_time: int):
+        self.game_id = game_id
+        self.game_mode = game_mode
+        self.start_time = start_time
