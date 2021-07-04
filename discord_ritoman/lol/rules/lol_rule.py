@@ -1,16 +1,29 @@
 from discord_ritoman.db.accessors import update_lol_user_last_updated
 from discord_ritoman.lol.stats.match_stat import get_stat
 import enum
-from typing import Dict, List, Union
+from typing import Any, ClassVar, Dict, List, Optional, Union
 from discord_ritoman.db.schema import LoLUser
-
-GLOBAL_LOL_RULES = {}
 
 
 class LoLRuleType(enum.Enum):
     ALL = 0
     GAME_END = 1
     END_OF_DAY = 2
+    GAME_START = 3
+
+
+class LoLRuleData:
+    def __init__(
+        self,
+        obj: ClassVar[Any],
+        name: str,
+        rule_type: LoLRuleType,
+        run_after: List[str],
+    ):
+        self.name = name
+        self.rule_type = rule_type
+        self.obj = obj
+        self.run_after = run_after
 
 
 class LoLRule:
@@ -20,27 +33,32 @@ class LoLRule:
         """"""
         raise NotImplementedError
 
-    def run(self, results: Dict[str, bool], user: Union[LoLUser, None] = None):
+    def run(
+        self, results: Dict[str, bool], user: Union[LoLUser, None] = None
+    ) -> None:
         """"""
         raise NotImplementedError
+
+
+GLOBAL_LOL_RULES: Dict[str, LoLRuleData] = {}
 
 
 def lol_rule(
     name: str,
     rule_type: LoLRuleType = LoLRuleType.GAME_END,
     run_after: List[str] = [],
-):
-    def decorator(cls):
+) -> Any:
+    def decorator(cls: ClassVar[Any]):
         global GLOBAL_LOL_RULES
 
-        class Wrapper:
-            def __init__(self, obj):
-                self.name = name
-                self.rule_type = rule_type
-                self.obj = obj
-                self.run_after = run_after
+        # class Wrapper:
+        #     def __init__(self, obj: ClassVar[Any]):
+        #         self.name = name
+        #         self.rule_type = rule_type
+        #         self.obj = obj
+        #         self.run_after = run_after
 
-        w = Wrapper(cls())
+        w = LoLRuleData(cls(), name, rule_type, run_after)
 
         GLOBAL_LOL_RULES[name] = w
 
@@ -49,16 +67,16 @@ def lol_rule(
     return decorator
 
 
-def _get_pending_rules(rule_type: LoLRuleType) -> List[LoLRule]:
+def _get_pending_rules(rule_type: LoLRuleType) -> List[LoLRuleData]:
     """"""
-    pending = []
+    pending: List[LoLRuleData] = []
     for _, rule in GLOBAL_LOL_RULES.items():
         if rule.rule_type == rule_type or rule_type == LoLRuleType.ALL:
             pending.append(rule)
     return pending
 
 
-def run_lol_rules(rule_type: LoLRuleType, user: Union[LoLUser, None] = None):
+def run_lol_rules(rule_type: LoLRuleType, user: Optional[LoLUser] = None):
     """"""
     pending = _get_pending_rules(rule_type)
     results = {}
@@ -99,5 +117,6 @@ def run_lol_rules(rule_type: LoLRuleType, user: Union[LoLUser, None] = None):
     # this is built in behavior
     if rule_type == LoLRuleType.ALL or rule_type == LoLRuleType.GAME_END:
         match_end = get_stat("match_end")
-        if match_end > user.last_updated:
-            update_lol_user_last_updated(user, match_end)
+        if user is not None:
+            if match_end > user.last_updated:
+                update_lol_user_last_updated(user, match_end)

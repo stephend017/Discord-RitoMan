@@ -1,10 +1,13 @@
 """
 Interface for accessing riot API
 """
-from discord_ritoman.utils import create_logger, dynamic_import_class
+from discord_ritoman.utils import create_logger
 from discord_ritoman.lru_cache import lru_cache
 from typing import Any, List
-from discord_ritoman.lol_match_metadata import LoLMatchMetadata
+from discord_ritoman.lol_match_metadata import (
+    LoLMatchMetadata,
+    LoLMatchStartData,
+)
 import requests
 import os
 import sys
@@ -19,7 +22,7 @@ class RiotAPIResponseHandler:
     class to define custom response behavior from the riot_api_get function
     """
 
-    def __init__(self, status_code, handler):
+    def __init__(self, status_code: int, handler: Any):
         self.status_code = status_code
         self.handler = handler
 
@@ -173,3 +176,16 @@ def get_puuid(summoner_name: str) -> str:
 
     url = f"https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}"
     return riot_api_get(url)["puuid"]
+
+
+@lru_cache
+def get_active_game(account_id: str):
+    """
+    TODO
+    """
+    url = f"https://na1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{account_id}"
+    response = riot_api_get(url)
+
+    return LoLMatchStartData(
+        response["game_id"], response["game_mode"], int(response["start_time"])
+    )

@@ -15,7 +15,7 @@ class KillStat(LoLMatchStat):
     ) -> Any:
         participant_id = get_stat("participant_ids")[account_id]
 
-        result = {"total_kills": 0, "solo_kills": 0, "data": {}}
+        result: Any = {"total_kills": 0, "solo_kills": 0, "data": {}}
 
         for frame in timeline["frames"]:
             for event in frame["events"]:

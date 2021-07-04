@@ -4,7 +4,7 @@ Global store for the db session to use
 import os
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 from discord_ritoman.utils import dynamic_import_class, get_db_uri
 
@@ -20,5 +20,5 @@ postgresql_engine = create_engine(
         config.DB_NAME,
     )
 )
-Session = sessionmaker(bind=postgresql_engine)
-session = Session()
+GlobalSession = sessionmaker(bind=postgresql_engine)
+session: Session = GlobalSession()
