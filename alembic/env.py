@@ -30,7 +30,7 @@ target_metadata = Base.metadata
 # ... etc.
 
 config_name = os.getenv("APP_CONFIG", "TestingConfig")
-app_config = dynamic_import_class("discord_ritoman.db.config", config_name)
+# app_config = dynamic_import_class("discord_ritoman.db.config", config_name)
 sqlalchemy_uri = get_db_uri(
     "postgresql",
     "root",
