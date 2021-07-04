@@ -1,7 +1,7 @@
 from discord_ritoman.db.schema import LoLUser
 from typing import Any, Optional
 from discord import User
-
+import time
 from discord.ext.commands.context import Context
 from discord_ritoman.db.accessors import (
     create_bet,
@@ -83,6 +83,10 @@ class CasinoCommand:
 
         for active_game in active_games:
             if user_id == active_game.player:
+
+                if active_game.start_time + 400000 > round(time.time() * 1000):
+                    await ctx.send("unable to bet. game has already started")
+
                 # place bet
                 create_bet(
                     user_id,
