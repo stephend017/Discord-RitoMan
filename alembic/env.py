@@ -32,12 +32,18 @@ target_metadata = Base.metadata
 config_name = os.getenv("APP_CONFIG", "TestingConfig")
 app_config = dynamic_import_class("discord_ritoman.db.config", config_name)
 sqlalchemy_uri = get_db_uri(
-    app_config.DB_URI_BASE,
-    app_config.DB_USER,
-    app_config.DB_PASS,
-    app_config.DB_HOST,
-    app_config.DB_PORT,
-    app_config.DB_NAME,
+    "postgresql",
+    "root",
+    os.getenv("DB_PASS", "error"),
+    "localhost",
+    int(os.getenv("DB_PORT", 5432)),
+    "rito"
+    # app_config.DB_URI_BASE,
+    # app_config.DB_USER,
+    # app_config.DB_PASS,
+    # app_config.DB_HOST,
+    # app_config.DB_PORT,
+    # app_config.DB_NAME,
 )
 
 
