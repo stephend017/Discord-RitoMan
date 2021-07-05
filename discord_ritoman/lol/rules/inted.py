@@ -42,5 +42,5 @@ class IntedRule(LoLRule):
 
         send_discord_message(
             f"{prefixes[prefix_index].content} <@{user.discord_id}> {stat_prefixes_01[stat_prefix_01_index].content} {deaths['solo_deaths']} solo deaths and only {kills['solo_kills']} solo kills as {champions[user_participant_id]} in their latest defeat in league of legends. {suffixes[suffix_index].content}",
-            True,
+            False,
         )

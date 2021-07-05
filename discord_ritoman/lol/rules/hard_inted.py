@@ -38,4 +38,4 @@ class HardIntedRule(LoLRule):
             # message += f"{max_solo_deaths_to_champ} / {solo_deaths} of their solo deaths"
             message += f"{deaths['max_deaths_to_champ']['deaths']} / {deaths['solo_deaths']} of their solo deaths"
 
-        send_discord_message(message, True)
+        send_discord_message(message, False)
