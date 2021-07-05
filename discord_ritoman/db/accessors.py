@@ -146,13 +146,11 @@ def get_betters_on(user: LoLUser):
     )
 
 
-def create_bet(
-    player: int, better: int, bet: int, prediction: bool, game_id: int
-):
+def create_bet(player: int, better: int, bet: int, prediction: bool):
     """
     creates a new bet on a player
     """
-    bet = LoLBets(player, better, bet, prediction, game_id)
+    bet = LoLBets(player, better, bet, prediction)
     session.add(bet)
     session.commit()
 

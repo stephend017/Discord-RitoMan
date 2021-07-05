@@ -124,19 +124,12 @@ class LoLBets(Base):
     better = Column(BigInteger)
     amount = Column(BigInteger)
     prediction = Column(Boolean)
-    game_id = Column(BigInteger)
 
     def __init__(
-        self,
-        player: int,
-        better: int,
-        amount: int,
-        prediction: bool,
-        game_id: int,
+        self, player: int, better: int, amount: int, prediction: bool,
     ):
         self.uuid = uuid.uuid4().hex
         self.player = player
         self.better = better
         self.amount = amount
         self.prediction = prediction
-        self.game_id = game_id

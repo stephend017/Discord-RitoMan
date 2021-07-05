@@ -47,11 +47,7 @@ class BetCommand:
 
                 # place bet
                 create_bet(
-                    user_id,
-                    better_id,
-                    better_points,
-                    prediction,
-                    active_game.game_id,
+                    user_id, better_id, better_points, prediction,
                 )
                 await ctx.send(
                     f"Successfully predicted {'win' if prediction else 'loss'} on <@{user_id}>"
