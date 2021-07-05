@@ -37,18 +37,11 @@ class BetCommand:
                 f"Unable to create bet. Better only has {better_points}"
             )
 
-        active_games = get_all_active_games()
-
-        for active_game in active_games:
-            if user_id == active_game.player:
-
-                if active_game.start_time + 400000 > round(time.time() * 1000):
-                    await ctx.send("unable to bet. game has already started")
-
-                # place bet
-                create_bet(
-                    user_id, better_id, better_points, prediction,
-                )
-                await ctx.send(
-                    f"Successfully predicted {'win' if prediction else 'loss'} on <@{user_id}>"
-                )
+        if get_lol_user_by_discord_id(user_id) is not None:
+            # place bet
+            create_bet(
+                user_id, better_id, better_points, prediction,
+            )
+            await ctx.send(
+                f"Successfully predicted {'win' if prediction else 'loss'} on <@{user_id}>"
+            )
