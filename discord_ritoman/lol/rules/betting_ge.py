@@ -67,4 +67,4 @@ class BettingGERule(LoLRule):
 
             remove_bet(better)
 
-        remove_lol_game(get_stat("gameId"), user.discord_id)
+        remove_lol_game(get_stat("game_id"), user.discord_id)
