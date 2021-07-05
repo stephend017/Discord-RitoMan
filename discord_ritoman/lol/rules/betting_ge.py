@@ -18,7 +18,9 @@ class BettingGERule(LoLRule):
     def should_run(
         self, results: Dict[str, bool], user: Union[LoLUser, None]
     ) -> bool:
-        return True
+        if user is None:
+            return False
+        return len(get_betters_on(user)) > 0
 
     def run(self, results: Dict[str, bool], user: Union[LoLUser, None]):
         if user is None:
