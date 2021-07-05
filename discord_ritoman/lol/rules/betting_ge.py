@@ -20,7 +20,7 @@ class BettingGERule(LoLRule):
     ) -> bool:
         if user is None:
             return False
-        return len(get_betters_on(user)) > 0
+        return True
 
     def run(self, results: Dict[str, bool], user: Union[LoLUser, None]):
         if user is None:
@@ -32,6 +32,10 @@ class BettingGERule(LoLRule):
         )
 
         betters = get_betters_on(user)
+
+        if len(betters) == 0:
+            add_lol_user_points(user, int(player_points))
+            return
 
         better_points: List[int] = []
         for better in betters:
