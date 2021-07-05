@@ -6,7 +6,7 @@ from typing import Any
 @bot_command("vault")
 class VaultCommand:
     @staticmethod
-    async def vault(ctx: Any, *args: Any, **kwargs: Any):
+    async def default(ctx: Any, *args: Any, **kwargs: Any):
         """
         shows all player points or a specific players points
         """

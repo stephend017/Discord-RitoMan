@@ -14,7 +14,7 @@ import time
 @bot_command("bet")
 class BetCommand:
     @staticmethod
-    async def bet(ctx: Context, *args: Any, **kwargs: Any):
+    async def default(ctx: Context, *args: Any, **kwargs: Any):
         """
         Allows a user to place a bet on a player in an active game
 
