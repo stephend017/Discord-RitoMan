@@ -1,4 +1,5 @@
 from discord_ritoman.db.accessors import (
+    add_lol_user_points,
     create_bet,
     get_all_active_games,
     get_lol_user_by_discord_id,
@@ -40,8 +41,9 @@ class BetCommand:
         if get_lol_user_by_discord_id(user_id) is not None:
             # place bet
             create_bet(
-                user_id, better_id, better_points, prediction,
+                user_id, better_id, bet, prediction,
             )
+            add_lol_user_points(better_entry, -bet)
             await ctx.send(
                 f"Successfully predicted {'win' if prediction else 'loss'} on <@{user_id}>"
             )
