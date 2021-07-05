@@ -5,8 +5,6 @@ from discord_ritoman.db.accessors import (
 )
 from discord_ritoman.db.schema import LoLUser
 from typing import Any, Optional
-from discord.ext.commands.context import Context
-from discord import User
 from discord_ritoman.bot.bot_command import bot_command
 import time
 
@@ -14,7 +12,7 @@ import time
 @bot_command("bet")
 class BetCommand:
     @staticmethod
-    async def default(ctx: Context, *args: Any, **kwargs: Any):
+    async def default(ctx: Any, *args: Any, **kwargs: Any):
         """
         Allows a user to place a bet on a player in an active game
 
@@ -24,8 +22,7 @@ class BetCommand:
         bet: int = int(args[1])
         prediction: bool = args[2] == "win"
 
-        better: User = ctx.author()[0]
-        better_id: int = better.id
+        better_id: int = ctx.message.author.id
 
         better_entry: Optional[LoLUser] = get_lol_user_by_discord_id(better_id)
         if better_entry is None:
