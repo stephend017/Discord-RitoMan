@@ -1,31 +1,31 @@
-name: Python package
+# name: Python package
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+# on:
+#   push:
+#     branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
 
-jobs:
-  build:
+# jobs:
+#   build:
 
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8]
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         python-version: [3.8]
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Tox
-      run: |
-        chmod +x ./scripts/cleanup_env.sh
-        ./scripts/cleanup_env.sh
-        chmod +x ./scripts/setup_env.sh
-        ./scripts/setup_env.sh
-        chmod +x ./scripts/run_tests.sh
-        ./scripts/run_tests.sh
-        ./scripts/cleanup_env.sh
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Set up Python ${{ matrix.python-version }}
+#       uses: actions/setup-python@v2
+#       with:
+#         python-version: ${{ matrix.python-version }}
+#     - name: Tox
+#       run: |
+#         chmod +x ./scripts/cleanup_env.sh
+#         ./scripts/cleanup_env.sh
+#         chmod +x ./scripts/setup_env.sh
+#         ./scripts/setup_env.sh
+#         chmod +x ./scripts/run_tests.sh
+#         ./scripts/run_tests.sh
+#         ./scripts/cleanup_env.sh
