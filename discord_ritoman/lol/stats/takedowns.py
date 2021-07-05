@@ -18,7 +18,7 @@ class TakedownStat(LoLMatchStat):
         result = 0
 
         for participant in data["participants"]:
-            if participant["participant_id"] == participant_id:
+            if participant["participantId"] == participant_id:
                 result = (
                     participant["stats"]["kills"]
                     + participant["stats"]["assists"]
