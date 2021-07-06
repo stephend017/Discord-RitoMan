@@ -4,6 +4,7 @@ from discord_ritoman.db.accessors import (
     get_all_active_games,
 )
 from discord_ritoman.bot.bot_command import bot_command
+import datetime
 
 
 @bot_command("casino")
@@ -19,16 +20,12 @@ class CasinoCommand:
         message = "Welcome to the Casino\n\nActive bets:\n"
 
         for bet in active_bets:
-            message += (
-                f"<@{bet.better}> bet {bet.amount} points on <@{bet.player}>\n"
-            )
+            message += f"<@{bet.better}> bet {bet.amount} points on <@{bet.player}> at {datetime.datetime.fromtimestamp(bet.created / 1000.0).strftime('%m/%d/%Y, %H:%M:%S')}\n"
 
         message += "\nActive games:\n"
 
         for game in active_games:
-            message += (
-                f"<@{game.player}> is playing in game_id {game.game_id}\n"
-            )
+            message += f"<@{game.player}> is playing in game_id {game.game_id} which started at {datetime.datetime.fromtimestamp(game.start_time / 1000.0).strftime('%m/%d/%Y, %H:%M:%S')}\n"
 
         await ctx.send(message)
 

@@ -1,7 +1,6 @@
 from discord_ritoman.db.accessors import (
     add_lol_user_points,
     create_bet,
-    get_all_active_games,
     get_lol_user_by_discord_id,
 )
 from discord_ritoman.db.schema import LoLUser
@@ -41,7 +40,11 @@ class BetCommand:
         if get_lol_user_by_discord_id(user_id) is not None:
             # place bet
             create_bet(
-                user_id, better_id, bet, prediction,
+                user_id,
+                better_id,
+                bet,
+                prediction,
+                int(time.time() * 1000),  # epoch time in millis
             )
             add_lol_user_points(better_entry, -bet)
             await ctx.send(
