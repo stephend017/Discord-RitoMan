@@ -40,6 +40,10 @@ class BettingGERule(LoLRule):
 
         better_points: List[int] = []
         for better in betters:
+            if better.created > get_stat("match_start"):
+                # exclude bets placed after game started
+                continue
+
             better_points.append(
                 Casino.calculate_better_points(
                     better.amount,

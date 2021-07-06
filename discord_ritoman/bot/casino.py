@@ -20,7 +20,7 @@ class CasinoCommand:
         message = "Welcome to the Casino\n\nActive bets:\n"
 
         for bet in active_bets:
-            message += f"<@{bet.better}> bet {bet.amount} points on <@{bet.player}> at {datetime.datetime.fromtimestamp(bet.created / 1000.0).strftime('%m/%d/%Y, %H:%M:%S')}\n"
+            message += f"<@{bet.better}> bet {bet.amount} points on <@{bet.player}> {'winning' if bet.prediction else 'losing'} their next game at {datetime.datetime.fromtimestamp(bet.created / 1000.0).strftime('%m/%d/%Y, %H:%M:%S')}\n"
 
         message += "\nActive games:\n"
 
