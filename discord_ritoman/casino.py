@@ -13,8 +13,9 @@ bets calculated with amount of points player won
 
 """
 
-from discord import player
 from discord_ritoman.models import GameMode
+
+WIN_MULTIPLIER = 2
 
 
 class Casino:
@@ -36,7 +37,10 @@ class Casino:
         if not did_win:
             return 0
 
-        return int(takedowns * Casino.gamemode_multiplier(gamemode))
+        return (
+            int(takedowns * Casino.gamemode_multiplier(gamemode))
+            * WIN_MULTIPLIER
+        )
 
     @staticmethod
     def calculate_better_points(
@@ -48,10 +52,10 @@ class Casino:
         if did_win != prediction:
             return 0
 
-        return int(bet * Casino.gamemode_multiplier(gamemode))
+        return int(bet * Casino.gamemode_multiplier(gamemode)) * WIN_MULTIPLIER
 
     @staticmethod
-    def calculate_player_multiplier(
+    def calculate_player_bonus(
         player_points: int, better_points: int
     ) -> float:
         """
@@ -63,7 +67,7 @@ class Casino:
         return 1.0 + (player_points / better_points)
 
     @staticmethod
-    def calculate_better_multiplier(
+    def calculate_better_bonus(
         player_points: int, better_points: int
     ) -> float:
         """

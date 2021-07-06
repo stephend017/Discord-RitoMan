@@ -1,3 +1,4 @@
+from discord_ritoman.discord_api import send_discord_message
 from discord_ritoman.db.accessors import (
     add_lol_user_points,
     get_betters_on,
@@ -48,11 +49,14 @@ class BettingGERule(LoLRule):
                 )
             )
 
-        player_multiplier = Casino.calculate_player_multiplier(
+        player_bonus = Casino.calculate_player_bonus(
             player_points, sum(better_points)
         )
 
-        add_lol_user_points(user, int(player_multiplier * player_points))
+        add_lol_user_points(user, int(player_bonus + player_points))
+
+        player_result_message = f"<@{user.discord_id}> won {int(player_bonus + player_points)} points"
+        betting_results_message = ""
 
         for better in betters:
             better_user = get_lol_user_by_discord_id(better.better)
@@ -63,14 +67,17 @@ class BettingGERule(LoLRule):
             better_point = Casino.calculate_better_points(
                 better.amount, did_win, better.prediction, GameMode.UNDEFINED
             )
-            better_multiplier = Casino.calculate_better_multiplier(
+            better_bonus = Casino.calculate_better_bonus(
                 player_points, better_point
             )
 
-            add_lol_user_points(
-                better_user, int(better_multiplier * better_point)
-            )
+            add_lol_user_points(better_user, int(better_bonus + better_point))
 
+            betting_results_message += f'<@{better.better}> {"won" if better.prediction == did_win else "lost"} their bet of {better.amount} and won a total of {int(better_bonus + better_point)}\n'
             remove_bet(better)
+
+        send_discord_message(
+            f"<@{user}> {'won' if did_win else 'lost'} their game of League which means that \n{betting_results_message}\n and finally\n {player_result_message}"
+        )
 
         remove_lol_game(get_stat("game_id"), user.discord_id)
