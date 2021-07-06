@@ -14,7 +14,7 @@ def main():
 
     while True:
         schedule.run_pending()
-        time.sleep(60)  # check every minute
+        time.sleep(30)  # check every minute
 
 
 if __name__ == "__main__":
