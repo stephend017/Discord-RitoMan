@@ -47,6 +47,4 @@ class BetCommand:
                 int(time.time() * 1000),  # epoch time in millis
             )
             add_lol_user_points(better_entry, -bet)
-            await ctx.send(
-                f"Successfully predicted {'win' if prediction else 'loss'} on <@{user_id}>"
-            )
+            await ctx.send(f"prediction on <@{user_id}> created successfully")
