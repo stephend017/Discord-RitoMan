@@ -138,7 +138,6 @@ def _poll_game_start():
             f"Failed to get matches for user=[{user.discord_id}]",
             None,
             account_id=account_id,
-            start_timestamp=user.last_updated,
         )
 
         if game is None:
