@@ -63,6 +63,10 @@ class BettingGERule(LoLRule):
         betting_results_message = ""
 
         for better in betters:
+            if better.created > get_stat("match_start"):
+                # exclude bets placed after game started
+                continue
+
             better_user = get_lol_user_by_discord_id(better.better)
 
             if better_user is None:
