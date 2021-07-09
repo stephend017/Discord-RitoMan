@@ -20,7 +20,7 @@ class DonateCommand:
         poor_person_user = get_lol_user_by_discord_id(poor_person)
 
         if amount < 0:
-            await ctx.send("nah bro you poor poor")
+            await ctx.send("nah bro thats stealin")
             return
 
         if user is None:
