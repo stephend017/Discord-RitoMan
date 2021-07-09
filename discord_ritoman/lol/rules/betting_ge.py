@@ -81,7 +81,7 @@ class BettingGERule(LoLRule):
             remove_bet(better)
 
         send_discord_message(
-            f"<@{user}> {'won' if did_win else 'lost'} their game of League which means that \n{betting_results_message}\n and finally\n {player_result_message}"
+            f"<@{user.discord_id}> {'won' if did_win else 'lost'} their game of League which means that \n{betting_results_message}\n and finally\n {player_result_message}"
         )
 
         remove_lol_game(get_stat("game_id"), user.discord_id)
