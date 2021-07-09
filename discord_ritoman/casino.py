@@ -15,7 +15,7 @@ bets calculated with amount of points player won
 
 from discord_ritoman.models import GameMode
 
-WIN_MULTIPLIER = 2
+WIN_MULTIPLIER = 20
 
 
 class Casino:
