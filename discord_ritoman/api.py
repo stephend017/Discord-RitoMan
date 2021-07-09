@@ -161,6 +161,9 @@ def _poll_game_start():
                 > 0
             ):
                 # player already exists
+                logger.info(
+                    f"games: {''.join(str(x) for x in active_games)} player: {user.discord_id}"
+                )
                 continue
 
         # player or game does not exist, create new entry
