@@ -116,8 +116,7 @@ def remove_lol_game(game_id: int, player_id: int):
     Removes an active lol game from the db
     """
     session.query(LoLActiveGames).filter(
-        LoLActiveGames.game_id == game_id
-        and LoLActiveGames.player == player_id
+        LoLActiveGames.game_id == game_id, LoLActiveGames.player == player_id
     ).delete()
     session.commit()
 
@@ -143,7 +142,11 @@ def get_betters_on(user: LoLUser):
     Gets all active bets on a given user
     """
     return (
-        session.query(LoLBets).filter(LoLBets.player == user.discord_id).all()
+        session.query(LoLBets)
+        .filter(
+            LoLBets.player == user.discord_id, LoLBets.completed == false()
+        )
+        .all()
     )
 
 
@@ -163,7 +166,7 @@ def remove_bet(bet: LoLBets):
     removes an active bet (marked as completed)
     """
     session.query(LoLBets).filter(
-        LoLBets.player == bet.player and LoLBets.better == bet.better
+        LoLBets.player == bet.player, LoLBets.better == bet.better
     ).update({"completed": True})
     session.commit()
 
