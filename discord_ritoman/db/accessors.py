@@ -4,6 +4,7 @@ This class is where all database accessor functions will be defined
 from typing import List, Optional
 
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.sql.expression import false
 
 from discord_ritoman.models import GameResult
 from discord_ritoman.db.schema import (
@@ -134,7 +135,7 @@ def get_all_active_bets():
     Gets all the active bets for all
     active discord ritoman users
     """
-    return session.query(LoLBets).filter(LoLBets.completed is False).all()
+    return session.query(LoLBets).filter(LoLBets.completed == false()).all()
 
 
 def get_betters_on(user: LoLUser):
