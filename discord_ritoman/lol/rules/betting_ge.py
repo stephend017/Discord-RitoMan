@@ -1,3 +1,4 @@
+from discord_ritoman.utils import create_logger
 from discord_ritoman.discord_api import send_discord_message
 from discord_ritoman.db.accessors import (
     add_lol_user_points,
@@ -12,6 +13,8 @@ from discord_ritoman.lol.stats.match_stat import get_stat
 from discord_ritoman.db.schema import LoLUser
 from typing import Dict, List, Union
 from discord_ritoman.lol.rules.lol_rule import LoLRule, LoLRuleType, lol_rule
+
+logger = create_logger(__file__)
 
 
 @lol_rule("betting-ge", LoLRuleType.GAME_END)
@@ -35,6 +38,7 @@ class BettingGERule(LoLRule):
         betters = get_betters_on(user)
 
         if len(betters) == 0:
+            logger.info("0 bets placed")
             add_lol_user_points(user, int(player_points))
             return
 

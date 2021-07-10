@@ -118,7 +118,7 @@ def _poll_game_start():
     that have started for each user
     """
     users: List[LoLUser] = get_all_lol_users()
-    active_games = get_all_active_games()
+    # active_games = get_all_active_games()
 
     for user in users:
         game: LoLMatchStartData = with_logging(
@@ -132,28 +132,28 @@ def _poll_game_start():
         if game is None:
             continue
 
-        if (
-            len(
-                list(filter(lambda x: x.game_id == game.game_id, active_games))
-            )
-            > 0
-        ):
-            # game_id already exists
-            if (
-                len(
-                    list(
-                        filter(
-                            lambda x: x.player == user.discord_id, active_games
-                        )
-                    )
-                )
-                > 0
-            ):
-                # player already exists
-                logger.info(
-                    f"games: {''.join(str(x) for x in active_games)} player: {user.discord_id}"
-                )
-                continue
+        # if (
+        #     len(
+        #         list(filter(lambda x: x.game_id == game.game_id, active_games))
+        #     )
+        #     > 0
+        # ):
+        #     # game_id already exists
+        #     if (
+        #         len(
+        #             list(
+        #                 filter(
+        #                     lambda x: x.player == user.discord_id, active_games
+        #                 )
+        #             )
+        #         )
+        #         > 0
+        #     ):
+        #         # player already exists
+        #         logger.info(
+        #             f"games: {''.join(str(x) for x in active_games)} player: {user.discord_id}"
+        #         )
+        #         continue
 
         # player or game does not exist, create new entry
         add_lol_game(user, game.game_id, game.start_time, game.game_mode)
