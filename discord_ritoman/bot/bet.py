@@ -36,6 +36,7 @@ class BetCommand:
             await ctx.send(
                 f"Unable to create bet. Better only has {better_points}"
             )
+            return
 
         if get_lol_user_by_discord_id(user_id) is not None:
             # place bet
