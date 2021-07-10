@@ -18,6 +18,7 @@ from discord_ritoman.lol_match_metadata import (
 from discord_ritoman.lol_api import (
     get_account_id,
     get_active_game,
+    get_encrypted_summoner_id,
     get_matches,
     get_match_data,
     get_match_timeline,
@@ -137,7 +138,7 @@ def _poll_game_start():
             logger,
             f"Failed to get matches for user=[{user.discord_id}]",
             None,
-            account_id=account_id,
+            account_id=get_encrypted_summoner_id(user.riot_puuid),
         )
 
         if game is None:

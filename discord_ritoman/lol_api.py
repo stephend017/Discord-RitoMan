@@ -179,11 +179,28 @@ def get_puuid(summoner_name: str) -> str:
 
 
 @lru_cache
-def get_active_game(account_id: str):
+def get_encrypted_summoner_id(puuid: str) -> str:
+    """
+    Returns a riot encrypted summoner id based on a summoner puuid
+
+    Args:
+        summoner_name (str): the puuid of the summoner
+            to get a encrypted summoner id for
+
+    Returns:
+        str: the encrypted summoner id for the given summoner
+    """
+
+    url = f"https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}"
+    return riot_api_get(url)["id"]
+
+
+@lru_cache
+def get_active_game(encrypted_summoner_id: str):
     """
     TODO
     """
-    url = f"https://na1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{account_id}"
+    url = f"https://na1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{encrypted_summoner_id}"
     response = riot_api_get(url)
 
     return LoLMatchStartData(
