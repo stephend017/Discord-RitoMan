@@ -62,9 +62,10 @@ class Casino:
         returns the multiplier for the player points based on the player points
         won and the better points won
         """
-        if better_points <= 0:
-            return player_points
-        return 1.0 + (player_points / better_points)
+        # if better_points <= 0:
+        #     return player_points
+        # return better_points
+        return better_points * (1 if player_points > 0 else 0)
 
     @staticmethod
     def calculate_better_bonus(
@@ -74,6 +75,4 @@ class Casino:
         returns the multiplier for the better points based on the player points
         won and the better points won
         """
-        if player_points <= 0:
-            return better_points
-        return 1.0 + (better_points / player_points)
+        return player_points * (1 if better_points > 0 else 0)
