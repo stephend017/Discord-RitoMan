@@ -134,7 +134,7 @@ def get_all_active_bets():
     Gets all the active bets for all
     active discord ritoman users
     """
-    return session.query(LoLBets).all()
+    return session.query(LoLBets).filter(LoLBets.completed is False).all()
 
 
 def get_betters_on(user: LoLUser):

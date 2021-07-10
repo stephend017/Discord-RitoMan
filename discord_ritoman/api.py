@@ -138,7 +138,7 @@ def _poll_game_start():
             logger,
             f"Failed to get matches for user=[{user.discord_id}]",
             None,
-            account_id=get_encrypted_summoner_id(user.riot_puuid),
+            encrypted_summoner_id=get_encrypted_summoner_id(user.riot_puuid),
         )
 
         if game is None:
