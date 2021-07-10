@@ -121,18 +121,6 @@ def _poll_game_start():
     active_games = get_all_active_games()
 
     for user in users:
-        account_id: str = ""
-        account_id = with_logging(
-            get_account_id,
-            logger,
-            f"Failed to get account id for user=[{user.riot_puuid}]",
-            None,
-            puuid=user.riot_puuid,
-        )
-
-        if account_id is None:
-            continue
-
         game: LoLMatchStartData = with_logging(
             get_active_game,
             logger,

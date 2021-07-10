@@ -3,7 +3,7 @@ Interface for accessing riot API
 """
 from discord_ritoman.utils import create_logger
 from discord_ritoman.lru_cache import lru_cache
-from typing import Any, List
+from typing import Any, List, Optional
 from discord_ritoman.lol_match_metadata import (
     LoLMatchMetadata,
     LoLMatchStartData,
@@ -196,12 +196,15 @@ def get_encrypted_summoner_id(puuid: str) -> str:
 
 
 @lru_cache
-def get_active_game(encrypted_summoner_id: str):
+def get_active_game(encrypted_summoner_id: str) -> Optional[LoLMatchStartData]:
     """
     TODO
     """
     url = f"https://na1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{encrypted_summoner_id}"
-    response = riot_api_get(url)
+    response = riot_api_get(
+        url,
+        custom_handlers=[RiotAPIResponseHandler(404, lambda response: None)],
+    )
 
     return LoLMatchStartData(
         response["game_id"], response["game_mode"], int(response["start_time"])
