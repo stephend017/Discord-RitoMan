@@ -119,14 +119,14 @@ def _poll_game_start():
     """
     users: List[LoLUser] = get_all_lol_users()
     # active_games = get_all_active_games()
-
     for user in users:
+        esid = get_encrypted_summoner_id(user.riot_puuid)
         game: LoLMatchStartData = with_logging(
             get_active_game,
             logger,
             f"Failed to get matches for user=[{user.discord_id}]",
             None,
-            encrypted_summoner_id=get_encrypted_summoner_id(user.riot_puuid),
+            encrypted_summoner_id=esid,
         )
 
         if game is None:
