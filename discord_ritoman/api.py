@@ -6,7 +6,7 @@ from discord_ritoman.lol.stats.match_stat import (
 from discord_ritoman.db.schema import LoLUser
 from discord_ritoman.db.accessors import (
     add_lol_game,
-    get_all_active_games,
+    # get_all_active_games,
     get_all_lol_users,
 )
 from discord_ritoman.utils import create_logger, with_logging
@@ -124,7 +124,7 @@ def _poll_game_start():
         game: LoLMatchStartData = with_logging(
             get_active_game,
             logger,
-            f"Failed to get matches for user=[{user.discord_id}]",
+            f"Failed to get active game for user=[{user.discord_id}]",
             None,
             encrypted_summoner_id=esid,
         )
