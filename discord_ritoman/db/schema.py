@@ -125,6 +125,7 @@ class LoLBets(Base):
     amount = Column(BigInteger)
     prediction = Column(Boolean)
     created = Column(BigInteger)
+    completed = Column(Boolean)
 
     def __init__(
         self,
@@ -140,3 +141,4 @@ class LoLBets(Base):
         self.amount = amount
         self.prediction = prediction
         self.created = created
+        self.completed = False

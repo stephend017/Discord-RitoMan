@@ -163,7 +163,7 @@ def remove_bet(bet: LoLBets):
     """
     session.query(LoLBets).filter(
         LoLBets.player == bet.player and LoLBets.better == bet.better
-    ).delete()
+    ).update({"completed": True})
     session.commit()
 
 
