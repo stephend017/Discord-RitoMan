@@ -16,8 +16,14 @@ class BetCommand:
         """
         Allows a user to place a bet on a player in an active game
 
-        @ritoman casino bet @akash 100 win
+        @ritoman bet @akash 100 win
         """
+        if len(args) < 3:
+            await ctx.send(
+                "Command format not recognized. Please use the format `@ritoman bet <user> <amount> <result>`"
+            )
+            return
+
         user_id: int = int(args[0][3:-1])
         bet: int = int(args[1])
         prediction: bool = args[2] == "win"
