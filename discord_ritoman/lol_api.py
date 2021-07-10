@@ -161,7 +161,6 @@ def get_match_timeline(match_id: int) -> Any:
     return riot_api_get(url)
 
 
-@lru_cache
 def get_puuid(summoner_name: str) -> str:
     """
     Returns a riot puuid based on a summoner name
@@ -178,7 +177,6 @@ def get_puuid(summoner_name: str) -> str:
     return riot_api_get(url)["puuid"]
 
 
-@lru_cache
 def get_encrypted_summoner_id(puuid: str) -> str:
     """
     Returns a riot encrypted summoner id based on a summoner puuid
@@ -195,7 +193,6 @@ def get_encrypted_summoner_id(puuid: str) -> str:
     return riot_api_get(url)["id"]
 
 
-@lru_cache
 def get_active_game(encrypted_summoner_id: str) -> Optional[LoLMatchStartData]:
     """
     TODO
