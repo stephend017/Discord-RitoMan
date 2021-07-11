@@ -203,6 +203,9 @@ def get_active_game(encrypted_summoner_id: str) -> Optional[LoLMatchStartData]:
         custom_handlers=[RiotAPIResponseHandler(404, lambda response: None)],
     )
 
+    if response is None:
+        return None
+
     return LoLMatchStartData(
         response["game_id"], response["game_mode"], int(response["start_time"])
     )
