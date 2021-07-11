@@ -120,6 +120,6 @@ def with_logging(
     """
     try:
         return func(**kwargs)
-    except Exception:
-        logger.error(log_message)
+    except Exception as e:
+        logger.error(f"{log_message} -- {e}")
         return default
