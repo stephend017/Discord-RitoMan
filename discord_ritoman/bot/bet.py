@@ -24,6 +24,12 @@ class BetCommand:
             )
             return
 
+        if not str(args[0]).startswith("<@") or not str(args[0]).endswith(">"):
+            await ctx.send(
+                "Command format not recognized. Please use the format `@ritoman bet <user> <amount> <result>`"
+            )
+            return
+
         user_id: int = int(args[0][3:-1])
         bet: int = int(args[1])
         prediction: bool = args[2] == "win"
