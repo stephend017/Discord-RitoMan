@@ -207,5 +207,7 @@ def get_active_game(encrypted_summoner_id: str) -> Optional[LoLMatchStartData]:
         return None
 
     return LoLMatchStartData(
-        response["game_id"], response["game_mode"], int(response["start_time"])
+        response["gameId"],
+        response["gameMode"],
+        int(response["gameStartTime"]),
     )
