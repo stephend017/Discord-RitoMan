@@ -52,7 +52,7 @@ class Casino:
         if did_win != prediction:
             return 0
 
-        return int(bet * Casino.gamemode_multiplier(gamemode))
+        return int(bet * Casino.gamemode_multiplier(gamemode) * 2)
 
     @staticmethod
     def calculate_player_bonus(
