@@ -220,7 +220,7 @@ def get_active_game(encrypted_summoner_id: str) -> Optional[LoLMatchStartData]:
 
 class RiotAPI(
     metaclass=Client(
-        "https://na1.api.riotgames.com/lol/",
+        "https://na1.api.riotgames.com/lol",
         headers={
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36",
             "Accept-Language": "en-US,en;q=0.9",
@@ -232,7 +232,7 @@ class RiotAPI(
 ):
     get_active_game: Request = Request(
         "GET",
-        "spectator/v4/active-games/by-summoner/",
+        "/spectator/v4/active-games/by-summoner",
         rate_limits=[
             RateLimit(20, timedelta(seconds=1)),
             RateLimit(100, timedelta(minutes=2)),
@@ -241,7 +241,7 @@ class RiotAPI(
 
     get_encrypted_summoner_id: Request = Request(
         "GET",
-        "summoner/v4/summoners/by-puuid/",
+        "/summoner/v4/summoners/by-puuid",
         rate_limits=[
             RateLimit(20, timedelta(seconds=1)),
             RateLimit(100, timedelta(minutes=2)),
