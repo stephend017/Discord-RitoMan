@@ -129,43 +129,44 @@ def _poll_game_start():
         #     None,
         #     encrypted_summoner_id=esid,
         # )
-        esid = RiotAPI.get_encrypted_summoner_id(user.riot_puuid)
-        game_raw = RiotAPI.get_active_game(esid)
+        RiotAPI.get_encrypted_summoner_id(user.riot_puuid)
 
-        game = LoLMatchStartData(
-            game_raw["gameId"], game_raw["gameMode"], game_raw["gameStartTime"]
-        )
+        # game_raw = RiotAPI.get_active_game(esid)
 
-        if game is None:
-            continue
+        # game = LoLMatchStartData(
+        #     game_raw["gameId"], game_raw["gameMode"], game_raw["gameStartTime"]
+        # )
 
-        # if (
-        #     len(
-        #         list(filter(lambda x: x.game_id == game.game_id, active_games))
-        #     )
-        #     > 0
-        # ):
-        #     # game_id already exists
-        #     if (
-        #         len(
-        #             list(
-        #                 filter(
-        #                     lambda x: x.player == user.discord_id, active_games
-        #                 )
-        #             )
-        #         )
-        #         > 0
-        #     ):
-        #         # player already exists
-        #         logger.info(
-        #             f"games: {''.join(str(x) for x in active_games)} player: {user.discord_id}"
-        #         )
-        #         continue
+        # if game is None:
+        #     continue
 
-        # player or game does not exist, create new entry
-        add_lol_game(user, game.game_id, game.start_time, game.game_mode)
+        # # if (
+        # #     len(
+        # #         list(filter(lambda x: x.game_id == game.game_id, active_games))
+        # #     )
+        # #     > 0
+        # # ):
+        # #     # game_id already exists
+        # #     if (
+        # #         len(
+        # #             list(
+        # #                 filter(
+        # #                     lambda x: x.player == user.discord_id, active_games
+        # #                 )
+        # #             )
+        # #         )
+        # #         > 0
+        # #     ):
+        # #         # player already exists
+        # #         logger.info(
+        # #             f"games: {''.join(str(x) for x in active_games)} player: {user.discord_id}"
+        # #         )
+        # #         continue
 
-        run_lol_rules(LoLRuleType.GAME_START, user)
+        # # player or game does not exist, create new entry
+        # add_lol_game(user, game.game_id, game.start_time, game.game_mode)
+
+        # run_lol_rules(LoLRuleType.GAME_START, user)
 
 
 def poll_lol_api():
