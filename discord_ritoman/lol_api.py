@@ -15,7 +15,8 @@ import os
 import sys
 from sd_utils.api.client import Client
 from sd_utils.api.request import Request
-
+from sd_utils.api.error import Error
+import time
 
 logger = create_logger(__file__)
 
@@ -257,3 +258,14 @@ class RiotAPI(
     Returns:
         str: the encrypted summoner id for the given summoner
     """
+
+    @staticmethod
+    def __rate_limit_error_handler():
+        time.sleep(60)
+        return True
+
+    rate_limit_exceeded = Error(
+        429,
+        "Rate Limit Exceeded",
+        lambda status_code, content: RiotAPI.__rate_limit_error_handler(),
+    )
