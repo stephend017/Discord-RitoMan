@@ -129,16 +129,16 @@ def _poll_game_start():
         #     None,
         #     encrypted_summoner_id=esid,
         # )
-        RiotAPI.get_encrypted_summoner_id(user.riot_puuid)
+        esid = RiotAPI.get_encrypted_summoner_id(user.riot_puuid)
 
-        # game_raw = RiotAPI.get_active_game(esid)
+        game_raw = RiotAPI.get_active_game(esid)
 
-        # game = LoLMatchStartData(
-        #     game_raw["gameId"], game_raw["gameMode"], game_raw["gameStartTime"]
-        # )
+        game = LoLMatchStartData(
+            game_raw["gameId"], game_raw["gameMode"], game_raw["gameStartTime"]
+        )
 
-        # if game is None:
-        #     continue
+        if game is None:
+            continue
 
         # # if (
         # #     len(
@@ -164,9 +164,9 @@ def _poll_game_start():
         # #         continue
 
         # # player or game does not exist, create new entry
-        # add_lol_game(user, game.game_id, game.start_time, game.game_mode)
+        add_lol_game(user, game.game_id, game.start_time, game.game_mode)
 
-        # run_lol_rules(LoLRuleType.GAME_START, user)
+        run_lol_rules(LoLRuleType.GAME_START, user)
 
 
 def poll_lol_api():
