@@ -1,6 +1,8 @@
 """
 Interface for accessing riot API
 """
+from datetime import timedelta
+from sd_utils.api.rate_limit import RateLimit
 from discord_ritoman.utils import create_logger
 from discord_ritoman.lru_cache import lru_cache
 from typing import Any, List, Optional
@@ -11,6 +13,9 @@ from discord_ritoman.lol_match_metadata import (
 import requests
 import os
 import sys
+from sd_utils.api.client import Client
+from sd_utils.api.request import Request
+
 
 logger = create_logger(__file__)
 
@@ -211,3 +216,44 @@ def get_active_game(encrypted_summoner_id: str) -> Optional[LoLMatchStartData]:
         response["gameMode"],
         int(response["gameStartTime"]),
     )
+
+
+class RiotAPI(
+    metaclass=Client(
+        "https://na1.api.riotgames.com/lol/",
+        headers={
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
+            "Origin": "https://developer.riotgames.com",
+            "X-Riot-Token": RIOT_TOKEN,
+        },
+    )
+):
+    get_active_game: Request = Request(
+        "GET",
+        "spectator/v4/active-games/by-summoner/",
+        rate_limits=[
+            RateLimit(20, timedelta(seconds=1)),
+            RateLimit(100, timedelta(minutes=2)),
+        ],
+    )
+
+    get_encrypted_summoner_id: Request = Request(
+        "GET",
+        "summoner/v4/summoners/by-puuid/",
+        rate_limits=[
+            RateLimit(20, timedelta(seconds=1)),
+            RateLimit(100, timedelta(minutes=2)),
+        ],
+    )
+    """
+    Returns a riot encrypted summoner id based on a summoner puuid
+
+    Args:
+        summoner_name (str): the puuid of the summoner
+            to get a encrypted summoner id for
+
+    Returns:
+        str: the encrypted summoner id for the given summoner
+    """

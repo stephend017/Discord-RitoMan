@@ -5,3 +5,4 @@ schedule
 discord.py
 sqlalchemy
 alembic
+sd_utils==0.6.0
